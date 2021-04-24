@@ -6,7 +6,6 @@
         .m-portlet.m-portlet--creative .m-portlet__head {
             height: 0.01rem;
         }
-
     </style>
     <!--begin::Portlet-->
 
@@ -62,6 +61,7 @@
                                 <th>@lang('project.AVAILIBILTY') </th>
                             @elseif ($visit->monthly_visit != 0)
                                 <th>@lang('project.SHELF_SHARE')</th>
+                                <th>NY</th>
                                 <th> @lang('project.PRIX') </th>
                                 <th> @lang('project.PROMOTION') </th>
                             @endif
@@ -72,22 +72,28 @@
 
                         @foreach ($models as $model)
                             <tr>
-
                                 <td>{{ $model->brand_name}}</td>
                                 <td>{{ $model->product_name}}</td>
                                 @if ($visit->monthly_visit == 0)
 
                                     <td id="<?php echo '1' . $model->id; ?>">
                                         @if ($model->av == 1)  <?php echo '-' ?>
-
                                         @elseif ($model->av == 0) <?php echo 'OOS' ?>
-
                                         @elseif ($model->av == 2) <?php echo 'HA' ?>
                                         @endif
                                     </td>
 
                                 @elseif ($visit->monthly_visit != 0)
                                     <td>{{ $model->shelf}}</td>
+                                    <td>
+                                        <?php
+                                        if ($model->ny == '-10') {
+                                            echo '0';
+                                        } else {
+                                            echo $model->ny;
+                                        }
+                                        ?>
+                                    </td>
                                     <td>{{ $model->price}}</td>
                                     <td>{{ $model->promo_price}}</td>
                                 @endif

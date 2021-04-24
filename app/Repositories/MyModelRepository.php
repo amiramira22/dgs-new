@@ -61,7 +61,20 @@ class MyModelRepository extends ResourceRepository
         $models = MyModel::leftjoin('visits', 'models.visit_id', '=', 'visits.id')
             ->leftjoin('product_groups', 'product_groups.id', '=', 'models.product_group_id')
             ->leftjoin('brands', 'product_groups.brand_id', '=', 'brands.id')
-            ->select('models.id as id', 'models.product_group_id as product_group_id', 'product_groups.name as product_name', 'models.brand_id as brand_id', 'brands.name as brand_name', 'models.nb_sku as nb_sku', 'models.av_sku as av_sku', 'models.sku_display as sku_display', 'brands.name as brand_name', 'models.shelf as shelf', 'models.av as av', 'models.price as price', 'models.promo_price as promo_price')
+            ->select('models.id as id'
+                , 'models.product_group_id as product_group_id'
+                , 'product_groups.name as product_name'
+                , 'models.brand_id as brand_id'
+                , 'brands.name as brand_name'
+                , 'models.nb_sku as nb_sku'
+                , 'models.av_sku as av_sku'
+                , 'models.sku_display as sku_display'
+                , 'brands.name as brand_name'
+                , 'models.shelf as shelf'
+                , 'models.av as av'
+                , 'models.y as ny'
+                , 'models.price as price'
+                , 'models.promo_price as promo_price')
             ->where('visits.id', '=', $visit_id)
             ->orderBy('brands.id', 'ASC')
             ->orderBy('product_groups.category_id', 'ASC');

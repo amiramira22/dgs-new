@@ -129,6 +129,17 @@
         background-color: #008000;
         color: #fff;
     }
+
+
+     .table {
+         font-size: 14px;
+     }
+
+    th, td {
+        text-align: center !important;
+        height: 5px !important;
+        overflow: hidden !important;
+    }
 </style>
 
 <!--begin::Body-->

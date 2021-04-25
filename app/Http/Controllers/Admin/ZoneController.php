@@ -98,7 +98,7 @@ class ZoneController extends Controller {
         $id_zone_inserted = $this->zoneRepository->addZone($save, $zone_id);
 
         // Store data for only a single request and destory
-        Session::flash('message', 'Zone has been saved successfully.');
+        request()->session()->flash('message', 'Zone has been saved successfully.');
         // Redirect to `user.index` route
         // Use route:list to view the `Action` or where this routes going to
         return redirect()->route('admin.zone.index');
@@ -107,7 +107,7 @@ class ZoneController extends Controller {
     public function delete($id) {
         $this->zoneRepository->deleteZone($id);
         // Store data for only a single request and destory
-        Session::flash('message', 'Zone has been deleted.');
+        request()->session()->flash('message', 'Zone has been deleted.');
         // Redirect to `user.index` route
         // Use route:list to view the `Action` or where this routes going to
         return redirect()->route('admin.zone.index');
@@ -117,7 +117,7 @@ class ZoneController extends Controller {
         $save['id'] = $id;
         $save['active'] = 1;
         $this->zoneRepository->addZone($save, $id);
-        Session::flash('message', 'zone has been updated successfully.');
+        request()->session()->flash('message', 'zone has been updated successfully.');
         // Redirect to `user.index` route
         // Use route:list to view the `Action` or where this routes going to
         return redirect()->route('admin.zone.index');
@@ -127,7 +127,7 @@ class ZoneController extends Controller {
         $save['id'] = $id;
         $save['active'] = 0;
         $this->zoneRepository->addZone($save, $id);
-        Session::flash('message', 'zone has been updated successfully.');
+        request()->session()->flash('message', 'zone has been updated successfully.');
         // Redirect to `user.index` route
         // Use route:list to view the `Action` or where this routes going to
         return redirect()->route('admin.zone.index');

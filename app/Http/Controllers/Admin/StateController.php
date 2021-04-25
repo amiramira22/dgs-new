@@ -107,7 +107,7 @@ class StateController extends Controller {
         $id_state_inserted = $this->stateRepository->addState($save, $state_id);
 
         // Store data for only a single request and destory
-        Session::flash('message', 'State has been saved successfully.');
+        request()->session()->flash('message', 'State has been saved successfully.');
         // Redirect to `user.index` route
         // Use route:list to view the `Action` or where this routes going to
         return redirect()->route('admin.state.index');
@@ -116,7 +116,7 @@ class StateController extends Controller {
     public function delete($id) {
         $this->stateRepository->deleteState($id);
         // Store data for only a single request and destory
-        Session::flash('message', 'State has been deleted.');
+        request()->session()->flash('message', 'State has been deleted.');
         // Redirect to `user.index` route
         // Use route:list to view the `Action` or where this routes going to
         return redirect()->route('admin.state.index');
@@ -126,7 +126,7 @@ class StateController extends Controller {
         $save['id'] = $id;
         $save['active'] = 1;
         $this->stateRepository->addState($save, $id);
-        Session::flash('message', 'state has been updated successfully.');
+        request()->session()->flash('message', 'state has been updated successfully.');
         // Redirect to `user.index` route
         // Use route:list to view the `Action` or where this routes going to
         return redirect()->route('admin.state.index');
@@ -136,7 +136,7 @@ class StateController extends Controller {
         $save['id'] = $id;
         $save['active'] = 0;
         $this->stateRepository->addState($save, $id);
-        Session::flash('message', 'state has been updated successfully.');
+        request()->session()->flash('message', 'state has been updated successfully.');
         // Redirect to `user.index` route
         // Use route:list to view the `Action` or where this routes going to
         return redirect()->route('admin.state.index');

@@ -57,6 +57,7 @@ class VisitController extends Controller {
      */
     public function index(Request $request) {
         $title = \Lang::get('project.VISITES');
+        //$subTitle = \Lang::get('project.VISITES') . ' ' . \Lang::get('project.TEMPS_REEL');
         $subTitle = \Lang::get('project.VISITES') . ' ' . \Lang::get('project.TEMPS_REEL');
         $data['title'] = $title;
         $data['subTitle'] = $subTitle;
@@ -200,7 +201,7 @@ class VisitController extends Controller {
         $id_visit_inserted = $this->visitRepository->addVisit($save, $visit_id);
 
         // Store data for only a single request and destory
-        Session::flash('message', 'Visit has been saved successfully.');
+        request()->session()->flash('message', 'Visit has been saved successfully.');
         // Redirect to `user.index` route
         // Use route:list to view the `Action` or where this routes going to
         return redirect()->route('visit.index');
@@ -209,7 +210,7 @@ class VisitController extends Controller {
     public function delete($id) {
         $this->visitRepository->deleteVisit($id);
         // Store data for only a single request and destory
-        Session::flash('message', 'Visit has been deleted.');
+        request()->session()->flash('message', 'Visit has been deleted.');
         // Redirect to `user.index` route
         // Use route:list to view the `Action` or where this routes going to
         return redirect()->route('visit.index');
@@ -372,7 +373,7 @@ class VisitController extends Controller {
 
         $copy_visit = $this->visitRepository->copy($data, $id);
 
-        Session::flash('message', 'Visit has been copied successfully.');
+        request()->session()->flash('message', 'Visit has been copied successfully.');
         return redirect()->route('visit.models', $copy_visit);
     }
 

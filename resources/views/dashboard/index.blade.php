@@ -253,7 +253,7 @@
                             <h3 class="m-portlet__head-text m--font-danger">
                                 <i class="flaticon-comment m--font-danger"></i>
                                 <span style="padding-left:10px;"></span>
-                                Daily Feeds
+                                Feeds
                             </h3>
                         </div>
                     </div>

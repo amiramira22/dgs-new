@@ -98,7 +98,7 @@ class BrandController extends Controller {
         $id_brand_inserted = $this->brandRepository->addBrand($save, $brand_id);
 
         // Store data for only a single request and destory
-        Session::flash('message', 'Brand has been saved successfully.');
+        request()->session()->flash('message', 'Brand has been saved successfully.');
         // Redirect to `user.index` route
         // Use route:list to view the `Action` or where this routes going to
         return redirect()->route('admin.brand.index');
@@ -107,7 +107,7 @@ class BrandController extends Controller {
     public function delete($id) {
         $this->brandRepository->deleteBrand($id);
         // Store data for only a single request and destory
-        Session::flash('message', 'Brand has been deleted.');
+        request()->session()->flash('message', 'Brand has been deleted.');
         // Redirect to `user.index` route
         // Use route:list to view the `Action` or where this routes going to
         return redirect()->route('admin.brand.index');
@@ -117,7 +117,7 @@ class BrandController extends Controller {
         $save['id'] = $id;
         $save['active'] = 1;
         $this->brandRepository->addBrand($save, $id);
-        Session::flash('message', 'Brand has been updated successfully.');
+        request()->session()->flash('message', 'Brand has been updated successfully.');
         // Redirect to `user.index` route
         // Use route:list to view the `Action` or where this routes going to
         return redirect()->route('admin.brand.index');
@@ -127,7 +127,7 @@ class BrandController extends Controller {
         $save['id'] = $id;
         $save['active'] = 0;
         $this->brandRepository->addBrand($save, $id);
-        Session::flash('message', 'Brand has been updated successfully.');
+        request()->session()->flash('message', 'Brand has been updated successfully.');
         // Redirect to `user.index` route
         // Use route:list to view the `Action` or where this routes going to
         return redirect()->route('admin.brand.index');

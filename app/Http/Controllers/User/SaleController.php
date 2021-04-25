@@ -130,7 +130,7 @@ class SaleController extends Controller {
 
         $this->saleRepository->store($save);
         // Store data for only a single request and destory
-        Session::flash('message', 'Sale has been saved successfully.');
+        request()->session()->flash('message', 'Sale has been saved successfully.');
         // Redirect to `user.index` route
         // Use route:list to view the `Action` or where this routes going to
         return redirect()->route('promoter.sale.index');

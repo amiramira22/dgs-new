@@ -23,7 +23,7 @@ class Controller extends BaseController {
 
     public function __construct() {
         $this->middleware(function ($request, $next) {
-            App::setlocale(Session::get('connected_user_lang'));
+            App::setlocale(request()->session()->get('connected_user_lang'));
             return $next($request);
         });
     }

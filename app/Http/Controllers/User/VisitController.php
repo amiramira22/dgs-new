@@ -65,7 +65,7 @@ class VisitController extends Controller {
 
     public function deleteVisit($visit_id) {
         $this->visitRepository->destroy($visit_id);
-        Session::flash('message', 'Visit has been deleted successfully.');
+        request()->session()->flash('message', 'Visit has been deleted successfully.');
         // Redirect to `user.index` route
         // Use route:list to view the `Action` or where this routes going to
         return redirect()->route('admin.dashboard');

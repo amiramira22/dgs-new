@@ -80,8 +80,8 @@
                                 <div class="form-group m-form__group">
                                     <div class="row">
                                         <div class="col-md-12">
-                                            @if(Session::has('message'))
-                                            <center><h6><span class="m--font-danger">{{ Session::get('message') }}</span></h6></center>
+                                            @if(request()->session()->has('message'))
+                                            <center><h6><span class="m--font-danger">{{ request()->session()->get('message') }}</span></h6></center>
                                             @endif
                                         </div>
                                     </div>

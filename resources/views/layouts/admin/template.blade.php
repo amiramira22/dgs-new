@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 
 <html lang="en">
-<?php //dd(env('iconColor') ) ?>
+
 
 <!-- begin::Head -->
 <head>
     <meta charset="utf-8"/>
     <title><?php echo env('brand_name_title')?> | System</title>
+    <link rel="shortcut icon" href="{{ asset('img/logo-cap.png') }}">
     <meta name="description" content="Latest updates and statistic charts">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" />
@@ -137,8 +138,6 @@
 
     th, td {
         text-align: center !important;
-        height: 5px !important;
-        overflow: hidden !important;
     }
 </style>
 
@@ -531,7 +530,7 @@ url()->current()==url('outlet')
                         <!--end Fo Profile-->
                         <!-- begin admin panel -->
 
-                    <?php if(Session::get('connected_user_acces') == 'Admin' ) {?>
+                    <?php if(request()->session()->get('connected_user_acces') == 'Admin' ) {?>
                     <!--FO Performance-->
                         <li class="menu-item menu-item-submenu {{ Request::segment(2) === 'fo_report'
                                &&  url()->current()!=url('admin/fo_report/foProfile')
@@ -943,7 +942,7 @@ url()->current()==url('admin/state')
                                     <!-- <li class="m-nav__item m-topbar__user-profile m-topbar__user-profile--img  m-dropdown m-dropdown--medium m-dropdown--arrow m-dropdown--header-bg-fill m-dropdown--align-right m-dropdown--mobile-full-width m-dropdown--skin-light"
                                             m-dropdown-toggle="click">
                                             <?php
-                                    $selectedLang = Session::get('connected_user_lang');
+                                    $selectedLang = request()->session()->get('connected_user_lang');
                                     ?>
                                             <select id="lang" class="form-control mt-2">
                                                 <option value="fr" <?php if ($selectedLang == 'fr') echo 'selected'; ?>>
@@ -960,11 +959,15 @@ url()->current()==url('admin/state')
 
                                             <a href="#" class="m-nav__link m-dropdown__toggle">
                                                 <span class="m-topbar__welcome">Hello,&nbsp;</span>
-                                                <span class="m-topbar__username">{{Session::get('connected_user_name')}}</span>
+                                                <span class="m-topbar__username">
+
+                                                    {{session()->get('connected_user_name')}}
+
+                                                </span>
 
                                                 <?php
-                                                if ((Session::get('connected_user_photo')) && (Session::get('connected_user_photo')) != '' && (Session::get('connected_user_photo')) != NULL)
-                                                    $image = Session::get('connected_user_photo');
+                                                if ((request()->session()->get('connected_user_photo')) && (request()->session()->get('connected_user_photo')) != '' && (request()->session()->get('connected_user_photo')) != NULL)
+                                                    $image = request()->session()->get('connected_user_photo');
                                                 else
                                                     $image = 'user.png';
                                                 ?>
@@ -984,9 +987,9 @@ url()->current()==url('admin/state')
                                                                      class="m--img-rounded m--marginless" alt=""/>
                                                             </div>
                                                             <div class="m-card-user__details">
-                                                                <span class="m-card-user__name m--font-weight-500">{{Session::get('connected_user_name')}}</span>
+                                                                <span class="m-card-user__name m--font-weight-500">{{request()->session()->get('connected_user_name')}}</span>
                                                                 <a href=""
-                                                                   class="m-card-user__email m--font-weight-300 m-link">{{Session::get('connected_user_email')}}</a>
+                                                                   class="m-card-user__email m--font-weight-300 m-link">{{request()->session()->get('connected_user_email')}}</a>
                                                             </div>
                                                         </div>
                                                     </div>

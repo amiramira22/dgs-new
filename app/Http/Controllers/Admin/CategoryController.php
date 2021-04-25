@@ -111,7 +111,7 @@ class CategoryController extends Controller {
 //        }
         //dd($save);
         // Store data for only a single request and destory
-        Session::flash('message', 'Category has been saved successfully.');
+        request()->session()->flash('message', 'Category has been saved successfully.');
         // Redirect to `user.index` route
         // Use route:list to view the `Action` or where this routes going to
         return redirect()->route('admin.category.index');
@@ -120,7 +120,7 @@ class CategoryController extends Controller {
     public function delete($id) {
         $this->categoryRepository->deleteCategory($id);
         // Store data for only a single request and destory
-        Session::flash('message', 'Category has been deleted.');
+        request()->session()->flash('message', 'Category has been deleted.');
         // Redirect to `user.index` route
         // Use route:list to view the `Action` or where this routes going to
         return redirect()->route('admin.category.index');
@@ -131,7 +131,7 @@ class CategoryController extends Controller {
         $save['id'] = $id;
         $save['active'] = 1;
         $this->categoryRepository->addCategory($save, $id);
-        Session::flash('message', 'Category has been updated successfully.');
+        request()->session()->flash('message', 'Category has been updated successfully.');
         // Redirect to `user.index` route
         // Use route:list to view the `Action` or where this routes going to
         return redirect()->route('admin.category.index');
@@ -141,7 +141,7 @@ class CategoryController extends Controller {
         $save['id'] = $id;
         $save['active'] = 0;
         $this->categoryRepository->addCategory($save, $id);
-        Session::flash('message', 'Category has been updated successfully.');
+        request()->session()->flash('message', 'Category has been updated successfully.');
         // Redirect to `user.index` route
         // Use route:list to view the `Action` or where this routes going to
         return redirect()->route('admin.category.index');

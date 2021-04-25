@@ -76,7 +76,7 @@ class ClientController extends Controller {
 
         $this->clientRepository->store($save);
         // Store data for only a single request and destory
-        Session::flash('message', 'Client has been saved successfully.');
+        request()->session()->flash('message', 'Client has been saved successfully.');
         // Redirect to `user.index` route
         // Use route:list to view the `Action` or where this routes going to
         return redirect()->route('user.dashboard');
@@ -120,7 +120,7 @@ class ClientController extends Controller {
 
         $this->clientRepository->update($id, $save);
 
-        Session::flash('message', 'Client has been updated successfully.');
+        request()->session()->flash('message', 'Client has been updated successfully.');
         // Redirect to `user.index` route
         // Use route:list to view the `Action` or where this routes going to
         return redirect()->route('user.client.index');
@@ -130,7 +130,7 @@ class ClientController extends Controller {
         $save['id'] = $id;
         $save['active'] = 1;
         $this->clientRepository->update($id, $save);
-        Session::flash('message', 'Client has been updated successfully.');
+        request()->session()->flash('message', 'Client has been updated successfully.');
         // Redirect to `user.index` route
         // Use route:list to view the `Action` or where this routes going to
         return redirect()->route('user.client.index');
@@ -140,7 +140,7 @@ class ClientController extends Controller {
         $save['id'] = $id;
         $save['active'] = 0;
         $this->clientRepository->update($id, $save);
-        Session::flash('message', 'Client has been updated successfully.');
+        request()->session()->flash('message', 'Client has been updated successfully.');
         // Redirect to `user.index` route
         // Use route:list to view the `Action` or where this routes going to
         return redirect()->route('user.client.index');

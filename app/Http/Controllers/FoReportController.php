@@ -246,14 +246,14 @@ class FoReportController extends Controller {
             $save['w_date'] = firstDayOf('week', new DateTime($date_of_insertion_day));
             $save['m_date'] = firstDayOf('month', new DateTime($date_of_insertion_day));
             $save['date_de_conge'] = $date;
-            $save['admin_id'] = Session::get('connected_user_id');
+            $save['admin_id'] = request()->session()->get('connected_user_id');
             $save['fo_id'] = $fo_id;
             $save['type'] = $type;
             $save['note'] = $note;
             $inserted_id = $this->reportRepository->save_fo_information($save);
         }
 
-        Session::flash('message', 'Informations have been saved successfully.');
+        request()->session()->flash('message', 'Informations have been saved successfully.');
         return redirect()->route('admin.fo_report.fo_information_input');
     }
 
@@ -342,7 +342,7 @@ class FoReportController extends Controller {
 
         $this->reportRepository->delete_event($id);
 
-        Session::flash('message', 'Informations has been deleted successfully.');
+        request()->session()->flash('message', 'Informations has been deleted successfully.');
         // Redirect to `user.index` route
         // Use route:list to view the `Action` or where this routes going to
         return redirect()->route('admin.fo_report.fo_information_output', $date);

@@ -734,19 +734,58 @@ class ReportController extends Controller
                         $dates[] = $date;
                         $count_date += 1;
                     }
-                    $components[$row['brand_name']][$date] = array($row['shelf'], $row['metrage']);
-                    $components_chart[$row['brand_name']][$date] = $row['metrage'];
-                    $components_date [$row['date']] [$row['brand_name']] = $row['metrage'];
+                    $components[$row['brand_name']][$date] = array(
+                        $row['shelf']
+                    , $row['metrage']
+                    , $row['chapeau']
+                    , $row['yeux']
+                    , $row['main']
+                    , $row['pied']
+
+                    );
+                    $components_chart[$row['brand_name']][$date] = $row['shelf'];
+                    //$components_date [$row['date']] [$row['brand_name']] = $row['metrage'];
+                    $components_date [$row['date']] [$row['brand_name']] = $row['shelf'];
+
+                    $components_date_chapeau[$row['date']] [$row['brand_name']] = $row['chapeau'];
+                    $components_date_yeux[$row['date']] [$row['brand_name']] = $row['yeux'];
+                    $components_date_main[$row['date']] [$row['brand_name']] = $row['main'];
+                    $components_date_pied[$row['date']] [$row['brand_name']] = $row['pied'];
+
                 }
-                $sum_metrage_date = array();
+                $sum_chapeau_date = array();
+                $sum_yeux_date = array();
+                $sum_main_date = array();
+                $sum_pied_date = array();
+                foreach ($components_date_chapeau as $date => $componentBrand) {
+                    $sum_chapeau_date[$date] = array_sum(array_values($componentBrand));
+                }
+                foreach ($components_date_yeux as $date => $componentBrand) {
+                    $sum_yeux_date[$date] = array_sum(array_values($componentBrand));
+                }
+                foreach ($components_date_main as $date => $componentBrand) {
+                    $sum_main_date[$date] = array_sum(array_values($componentBrand));
+                }
+                foreach ($components_date_pied as $date => $componentBrand) {
+                    $sum_pied_date[$date] = array_sum(array_values($componentBrand));
+                }
+                $data['sum_chapeau_date'] = $sum_chapeau_date;
+                $data['sum_yeux_date'] = $sum_yeux_date;
+                $data['sum_main_date'] = $sum_main_date;
+                $data['sum_pied_date'] = $sum_pied_date;
+
+
+                $sum_shelf_date = array();
                 foreach ($components_date as $date => $componentBrand) {
-                    $sum_metrage_date[$date] = array_sum(array_values($componentBrand));
+                    $sum_shelf_date[$date] = array_sum(array_values($componentBrand));
                 }
 
-                //dd($components);
+
+
                 $data['components'] = $components;
                 $data['dates'] = $dates;
-                $data['sum_metrage_date'] = $sum_metrage_date;
+                //$data['sum_metrage_date'] = $sum_metrage_date;
+                $data['sum_shelf_date'] = $sum_shelf_date;
                 $data['components_chart'] = $components_chart;
                 $data['dates'] = $dates;
                 $data['count_date'] = $count_date;
@@ -959,8 +998,9 @@ class ReportController extends Controller
         $data['out_val'] = $request->input('out_val');
         $data['zone_val'] = $request->input('zone_val');
         $data['report_data'] = $this->reportRepository->get_shelf_cluster($date_type, $start_date, $end_date, $category_id, $cluster_id, $zone_ids, $channel_ids);
-        $data['sum_metrage'] = $this->reportRepository->get_total_metrage($date_type, $start_date, $end_date, $category_id, $zone_ids, $channel_ids);
-//dd( $data['report_data']);
+        //$data['sum_metrage'] = $this->reportRepository->get_total_metrage($date_type, $start_date, $end_date, $category_id, $zone_ids, $channel_ids);
+        //$data['sum_shelf'] = $this->reportRepository->get_total_shelf($date_type, $start_date, $end_date, $category_id, $zone_ids, $channel_ids);
+
         return view('report.shelf_share.load_shelf_cluster', $data);
     }
 

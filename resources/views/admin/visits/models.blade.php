@@ -6,8 +6,8 @@
 
 <meta name="csrf-token" content="{{ csrf_token() }}" />
 
-<!--@if(Session::has('message'))
-<p class="alert {{ Session::get('alert-class', 'alert-info') }}">{{ Session::get('message') }}</p>
+<!--@if(request()->session()->has('message'))
+<p class="alert {{ request()->session()->get('alert-class', 'alert-info') }}">{{ request()->session()->get('message') }}</p>
 @endif-->
 
 <div class="m-portlet m-portlet--mobile">

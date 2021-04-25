@@ -105,7 +105,7 @@ class SubChannelController extends Controller {
         $id_sub_channel_inserted = $this->subChannelRepository->addSubChannel($save, $sub_channel_id);
 
         // Store data for only a single request and destory
-        Session::flash('message', 'sub Channel has been saved successfully.');
+        request()->session()->flash('message', 'sub Channel has been saved successfully.');
         // Redirect to `user.index` route
         // Use route:list to view the `Action` or where this routes going to
         return redirect()->route('admin.sub_channel.index');
@@ -114,7 +114,7 @@ class SubChannelController extends Controller {
     public function delete($id) {
         $this->subChannelRepository->deleteSubChannel($id);
         // Store data for only a single request and destory
-        Session::flash('message', 'sub Channel has been deleted.');
+        request()->session()->flash('message', 'sub Channel has been deleted.');
         // Redirect to `user.index` route
         // Use route:list to view the `Action` or where this routes going to
         return redirect()->route('admin.sub_channel.index');
@@ -124,7 +124,7 @@ class SubChannelController extends Controller {
         $save['id'] = $id;
         $save['active'] = 1;
         $this->subChannelRepository->addSubChannel($save, $id);
-        Session::flash('message', 'Sub Channel has been updated successfully.');
+        request()->session()->flash('message', 'Sub Channel has been updated successfully.');
         // Redirect to `user.index` route
         // Use route:list to view the `Action` or where this routes going to
         return redirect()->route('admin.sub_channel.index');
@@ -134,7 +134,7 @@ class SubChannelController extends Controller {
         $save['id'] = $id;
         $save['active'] = 0;
         $this->subChannelRepository->addSubChannel($save, $id);
-        Session::flash('message', 'Sub Channel has been updated successfully.');
+        request()->session()->flash('message', 'Sub Channel has been updated successfully.');
         // Redirect to `user.index` route
         // Use route:list to view the `Action` or where this routes going to
         return redirect()->route('admin.sub_channel.index');

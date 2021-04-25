@@ -84,8 +84,7 @@ class DashboardController extends Controller
                 . '</br><b>Zone:</b> ' . $visit->zone_name
                 . '</br><b>State:</b> ' . $visit->state_name
                 . ' </br><b>Field officer:</b> ' . $visit->fo_name
-                . ' </br><b>Show outlet details:</b> <a class="m--font-red red filter-submit margin-bottom" href="' . url('outlet/view/' . $visit->outlet_id) . '  " data-toggle="tooltip" data-placement="top" title="Outlet details" target="_blank"><i class="fas fa-map-o"></i></a>'
-                . ' </br><b>Show visit details:</b><a class="m--font-info green filter-submit margin-bottom" href="' . url('visit/report/' . $visit->visit_id) . ' " data-toggle="tooltip" data-placement="top" title="Visit details" target="_blank"><i class="fas fa-map-o"></i></a>';
+               . ' </br><b>Show visit details:</b><a class="m--font-info green filter-submit margin-bottom" href="' . url('visit/report/' . $visit->visit_id) . ' " data-toggle="tooltip" data-placement="top" title="Visit details" target="_blank"><i class="fas fa-map-o"></i></a>';
 
             $marker['infowindow_content'] = $content;
 

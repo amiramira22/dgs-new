@@ -121,32 +121,41 @@ class VisitRepository extends ResourceRepository
                 else
                     $nestedData['date'] = reverse_format($v->date);
 
+                //enry time traitement
+                if (\request()->session()->get('connected_user_acces') == 'Admin') {
 
-                //enry time traitement 
-                if ($v->was_there == 0)
-                    $nestedData['entry_time'] = '<span class="blink_me" style="color: #F03434">' . $v->entry_time . '</span>
+                    if ($v->was_there == 0)
+                        $nestedData['entry_time'] = '<span class="blink_me" style="color: #F03434">' . $v->entry_time . '</span>
                                             <a style="color: #F03434" target="_blank" href="visit/position/' . $v->id . '/entry" >
                                                 <i class="flaticon-placeholder-2"></i></a>';
-                else
-                    $nestedData['entry_time'] = $v->entry_time;
+                    else
+                        $nestedData['entry_time'] = $v->entry_time;
+                } else   $nestedData['entry_time'] = $v->entry_time;
+
 
                 //exit time traitement
-                if (is_numeric($v->outlet_lat) && is_numeric($v->outlet_lat)
-                    && is_numeric($v->exit_latitude) && is_numeric($v->exit_longitude)) {
-                    $exit_was_there = was_there($v->outlet_lat, $v->outlet_long,
-                        $v->exit_latitude, $v->exit_longitude);
-                } else
-                    $exit_was_there = false;
-                if (($v->exit_latitude != '') && ($exit_was_there == 0)) {
+                if (\request()->session()->get('connected_user_acces') == 'Admin') {
 
-                    $Time = strtotime("-60 minutes", strtotime($v->created_time));
-                    $Time = strtotime($v->created_time);
-                    $nestedData['exit_time'] = '<span class="blink_me" style="color: #F03434">' . $v->exit_time . '</span>
+                    if (is_numeric($v->outlet_lat) && is_numeric($v->outlet_lat)
+                        && is_numeric($v->exit_latitude) && is_numeric($v->exit_longitude)) {
+                        $exit_was_there = was_there($v->outlet_lat, $v->outlet_long,
+                            $v->exit_latitude, $v->exit_longitude);
+                    } else
+                        $exit_was_there = false;
+
+                    if (($v->exit_latitude != '') && ($exit_was_there == 0)) {
+
+                        $Time = strtotime("-60 minutes", strtotime($v->created_time));
+                        $Time = strtotime($v->created_time);
+
+                        $nestedData['exit_time'] = '<span class="blink_me" style="color: #F03434">' . $v->exit_time . '</span>
                                             <a style="color: #F03434" target="_blank" href="visit/position/' . $v->id . '/exit" >
                                                 <i class="flaticon-placeholder-2"></i>
                                             </a>';
-                } else
-                    $nestedData['exit_time'] = $v->exit_time;
+                    } else
+                        $nestedData['exit_time'] = $v->exit_time;
+
+                } else $nestedData['exit_time'] = $v->exit_time;
 
 
                 $nestedData['oos'] = number_format(($v->oos_perc), 2, ',', ' ');
@@ -178,9 +187,11 @@ class VisitRepository extends ResourceRepository
                     $nestedData['remark'] = '';
 
 
-                $nestedData['action'] = '
+                if (\request()->session()->get('connected_user_acces') == 'Admin') {
 
-             
+                    $nestedData['action'] = '
+
+          
                         <span class="dropdown">
                         
 <button type="button" class="btn btn-sm btn-light-danger dropdown-toggle" 
@@ -226,7 +237,13 @@ data-toggle="dropdown"
 </div>
                 </div>
                 </span>';
-
+                } else {
+                    $nestedData['action'] = '<button type="button" 
+class="btn btn-sm btn-light-danger"><a href = "visit/report/' . $v->id . '"
+ title="Report" target="_blank">	
+                            <i class="fas fa-chart-line"></i>   Report			
+                            </a></button>';
+                }
                 $data[] = $nestedData;
             }
         }

@@ -1,7 +1,7 @@
 
 
 <?php
-$admin = Session::get('connected_user_id');
+$admin = request()->session()->get('connected_user_id');
 
 $ids = array();
 $components = array();
@@ -34,7 +34,7 @@ foreach ($events as $row) {
             <tr>
 
 
-                <?php if ((Session::get('connected_user_id') == 1 || Session::get('connected_user_id') == 10 || Session::get('connected_user_id') == 32)) { ?>
+                <?php if ((request()->session()->get('connected_user_id') == 1 || request()->session()->get('connected_user_id') == 10 || request()->session()->get('connected_user_id') == 32)) { ?>
                     <th  colspan="5">
                         <?php
                         echo reverse_format($date_js);
@@ -57,7 +57,7 @@ foreach ($events as $row) {
                 <th class ="text-center">Type</th>
                 <th class ="text-center">Note</th>
 
-                <?php if ((Session::get('connected_user_id') == 1 || Session::get('connected_user_id') == 10 || Session::get('connected_user_id') == 32)) { ?>
+                <?php if ((request()->session()->get('connected_user_id') == 1 || request()->session()->get('connected_user_id') == 10 || request()->session()->get('connected_user_id') == 32)) { ?>
                     <th class ="text-center">Action</th>
                 <?php } ?>
             </tr>
@@ -76,7 +76,7 @@ foreach ($events as $row) {
 //                    echo '<br>';
 
                         $i++;
-                        if ((Session::get('connected_user_id') == 1 || Session::get('connected_user_id') == 10 || Session::get('connected_user_id') == 32)) {
+                        if ((request()->session()->get('connected_user_id') == 1 || request()->session()->get('connected_user_id') == 10 || request()->session()->get('connected_user_id') == 32)) {
                             ?>
                             <tr>
                                 <td width="100px"><?php

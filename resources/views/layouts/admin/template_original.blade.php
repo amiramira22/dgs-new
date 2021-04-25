@@ -11,11 +11,11 @@
 
             <div class="row">
                 <div class="col-md-12">
-                    @if(Session::has('message'))
+                    @if(request()->session()->has('message'))
                     <div class="alert alert-info alert-dismissible fade show" role="alert">
                         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                         </button>
-                        {{ Session::get('message') }}
+                        {{ request()->session()->get('message') }}
                     </div>
 
                     @endif

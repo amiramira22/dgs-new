@@ -19,8 +19,10 @@ Route::get('cron/update_stock_issue/{date?}', ['as' => 'cron.update_stock_issue'
 Route::get('cron/performance/{date?}', ['as' => 'cron.performance', 'uses' => 'CronJobController@performance']);
 
 
-Route::get('/', 'LoginController@getLogin');
-Route::post('/login', 'LoginController@postLogin');
+Route::get('/',['as' => 'login', 'uses' => 'LoginController@getLogin']);
+Route::post('/',['as' => 'login', 'uses' => 'LoginController@getLogin']);
+Route::post('/login',['as' => 'postlogin', 'uses' => 'LoginController@postLogin']);
+Route::get('/login',['as' => 'postlogin', 'uses' => 'LoginController@postLogin']);
 
 Route::get('/clear', function () {
 
@@ -39,174 +41,178 @@ Route::group(['middleware' => ['authenticate']], function () {
     Route::get('/logout', ['as' => 'logout', 'uses' => 'LoginController@getLogout']);
 });
 
-Route::get('/dashboard', ['as' => 'dashboard', 'uses' => 'DashboardController@index']);
 
-Route::post('/dashboard/load_oos_peer_channel', ['as' => 'dashboard.load_oos_peer_channel', 'uses' => 'DashboardController@load_oos_peer_channel']);
-Route::post('/dashboard/load_chart_oos_per_channel', ['as' => 'dashboard.load_chart_oos_per_channel', 'uses' => 'DashboardController@load_chart_oos_per_channel']);
+Route::group(['middleware' => 'web'], function () {
+    // your routes here
 
-Route::post('/dashboard/load_oos_peer_category', ['as' => 'dashboard.load_oos_peer_category', 'uses' => 'DashboardController@load_oos_peer_category']);
-Route::post('/dashboard/load_chart_oos_per_category', ['as' => 'dashboard.load_chart_oos_per_category', 'uses' => 'DashboardController@load_chart_oos_per_category']);
+    Route::get('/dashboard', ['as' => 'dashboard', 'uses' => 'DashboardController@index']);
+
+    Route::post('/dashboard/load_oos_peer_channel', ['as' => 'dashboard.load_oos_peer_channel', 'uses' => 'DashboardController@load_oos_peer_channel']);
+    Route::post('/dashboard/load_chart_oos_per_channel', ['as' => 'dashboard.load_chart_oos_per_channel', 'uses' => 'DashboardController@load_chart_oos_per_channel']);
+
+    Route::post('/dashboard/load_oos_peer_category', ['as' => 'dashboard.load_oos_peer_category', 'uses' => 'DashboardController@load_oos_peer_category']);
+    Route::post('/dashboard/load_chart_oos_per_category', ['as' => 'dashboard.load_chart_oos_per_category', 'uses' => 'DashboardController@load_chart_oos_per_category']);
 
 
-Route::post('/dashboard/load_numeric_distribution', ['as' => 'dashboard.load_numeric_distribution', 'uses' => 'DashboardController@load_numeric_distribution']);
-Route::post('/dashboard/load_chart_numeric_distribution', ['as' => 'dashboard.load_chart_numeric_distribution', 'uses' => 'DashboardController@load_chart_numeric_distribution']);
+    Route::post('/dashboard/load_numeric_distribution', ['as' => 'dashboard.load_numeric_distribution', 'uses' => 'DashboardController@load_numeric_distribution']);
+    Route::post('/dashboard/load_chart_numeric_distribution', ['as' => 'dashboard.load_chart_numeric_distribution', 'uses' => 'DashboardController@load_chart_numeric_distribution']);
 
 
-Route::post('/dashboard/load_top_5_oos', ['as' => 'dashboard.load_top_5_oos', 'uses' => 'DashboardController@load_top_5_oos']);
-Route::post('/dashboard/load_top_oos_products', ['as' => 'dashboard.load_top_oos_products', 'uses' => 'DashboardController@load_top_oos_products']);
-Route::post('/dashboard/top_oos_all_products/{date}', ['as' => 'dashboard.top_oos_all_products', 'uses' => 'DashboardController@top_oos_all_products']);
-Route::get('/dashboard/top_oos_all_products/{date}', ['as' => 'dashboard.top_oos_all_products', 'uses' => 'DashboardController@top_oos_all_products']);
+    Route::post('/dashboard/load_top_5_oos', ['as' => 'dashboard.load_top_5_oos', 'uses' => 'DashboardController@load_top_5_oos']);
+    Route::post('/dashboard/load_top_oos_products', ['as' => 'dashboard.load_top_oos_products', 'uses' => 'DashboardController@load_top_oos_products']);
+    Route::post('/dashboard/top_oos_all_products/{date}', ['as' => 'dashboard.top_oos_all_products', 'uses' => 'DashboardController@top_oos_all_products']);
+    Route::get('/dashboard/top_oos_all_products/{date}', ['as' => 'dashboard.top_oos_all_products', 'uses' => 'DashboardController@top_oos_all_products']);
 
-Route::post('/dashboard/load_oos_trend', ['as' => 'dashboard.load_oos_trend', 'uses' => 'DashboardController@load_oos_trend']);
-Route::post('/dashboard/load_chart_oos_trend', ['as' => 'dashboard.load_chart_oos_trend', 'uses' => 'DashboardController@load_chart_oos_trend']);
+    Route::post('/dashboard/load_oos_trend', ['as' => 'dashboard.load_oos_trend', 'uses' => 'DashboardController@load_oos_trend']);
+    Route::post('/dashboard/load_chart_oos_trend', ['as' => 'dashboard.load_chart_oos_trend', 'uses' => 'DashboardController@load_chart_oos_trend']);
 
-Route::get('/dashboard/outlets_details', ['as' => 'dashboard.outlets_details', 'uses' => 'DashboardController@outlets_details']);
-Route::get('dashboard/daily_details', ['as' => 'dashboard.daily_details', 'uses' => 'DashboardController@daily_details']);
-Route::post('dashboard/daily_details', ['as' => 'dashboard.daily_details', 'uses' => 'DashboardController@daily_details']);
+    Route::get('/dashboard/outlets_details', ['as' => 'dashboard.outlets_details', 'uses' => 'DashboardController@outlets_details']);
+    Route::get('dashboard/daily_details', ['as' => 'dashboard.daily_details', 'uses' => 'DashboardController@daily_details']);
+    Route::post('dashboard/daily_details', ['as' => 'dashboard.daily_details', 'uses' => 'DashboardController@daily_details']);
 
-Route::get('/dashboard/monthly_details', ['as' => 'dashboard.monthly_details', 'uses' => 'DashboardController@monthly_details']);
-Route::post('/dashboard/monthly_details', ['as' => 'dashboard.monthly_details', 'uses' => 'DashboardController@monthly_details']);
+    Route::get('/dashboard/monthly_details', ['as' => 'dashboard.monthly_details', 'uses' => 'DashboardController@monthly_details']);
+    Route::post('/dashboard/monthly_details', ['as' => 'dashboard.monthly_details', 'uses' => 'DashboardController@monthly_details']);
 
 
 //Visit Routes
-Route::resource('visit', 'VisitController', ['only' => ['index', 'create', 'store']]);
-Route::post('visit', ['as' => 'visit.index', 'uses' => 'VisitController@index']);
-Route::post('visit/getVisits/', ['as' => 'visit.getVisits', 'uses' => 'VisitController@getVisits']);
-Route::get('visit/delete/{id}', ['as' => 'visit.delete', 'uses' => 'VisitController@delete']);
-Route::get('visit/edit/{id}', ['as' => 'visit.edit', 'uses' => 'VisitController@edit']);
-Route::post('visit/postVisit', ['as' => 'visit.postVisit', 'uses' => 'VisitController@postVisit']);
-Route::get('visit/models/{id}', ['as' => 'visit.models', 'uses' => 'VisitController@models']);
-Route::get('visit/outlet/{id}', ['as' => 'visit.outlet', 'uses' => 'VisitController@outlet']);
-Route::get('visit/copy/{id}', ['as' => 'visit.copy', 'uses' => 'VisitController@copy']);
-Route::post('visit/postDataModel', ['as' => 'visit.postDataModel', 'uses' => 'VisitController@postDataModel']);
-Route::post('visit/extrait_journalier', ['as' => 'visit.extrait_journalier', 'uses' => 'VisitController@extrait_journalier']);
-Route::get('visit/extrait_journalier', ['as' => 'visit.extrait_journalier', 'uses' => 'VisitController@extrait_journalier']);
-Route::post('visit/historique_pdv', ['as' => 'visit.historique_pdv', 'uses' => 'VisitController@historique_pdv']);
-Route::get('visit/historique_pdv', ['as' => 'visit.historique_pdv', 'uses' => 'VisitController@historique_pdv']);
-Route::post('visit/getOutletByZoneChannel', ['as' => 'visit.getOutletByZoneChannel', 'uses' => 'VisitController@getOutletByZoneChannel']);
+    Route::resource('visit', 'VisitController', ['only' => ['index', 'create', 'store']]);
+    Route::post('visit', ['as' => 'visit.index', 'uses' => 'VisitController@index']);
+    Route::post('visit/getVisits/', ['as' => 'visit.getVisits', 'uses' => 'VisitController@getVisits']);
+    Route::get('visit/delete/{id}', ['as' => 'visit.delete', 'uses' => 'VisitController@delete']);
+    Route::get('visit/edit/{id}', ['as' => 'visit.edit', 'uses' => 'VisitController@edit']);
+    Route::post('visit/postVisit', ['as' => 'visit.postVisit', 'uses' => 'VisitController@postVisit']);
+    Route::get('visit/models/{id}', ['as' => 'visit.models', 'uses' => 'VisitController@models']);
+    Route::get('visit/outlet/{id}', ['as' => 'visit.outlet', 'uses' => 'VisitController@outlet']);
+    Route::get('visit/copy/{id}', ['as' => 'visit.copy', 'uses' => 'VisitController@copy']);
+    Route::post('visit/postDataModel', ['as' => 'visit.postDataModel', 'uses' => 'VisitController@postDataModel']);
+    Route::post('visit/extrait_journalier', ['as' => 'visit.extrait_journalier', 'uses' => 'VisitController@extrait_journalier']);
+    Route::get('visit/extrait_journalier', ['as' => 'visit.extrait_journalier', 'uses' => 'VisitController@extrait_journalier']);
+    Route::post('visit/historique_pdv', ['as' => 'visit.historique_pdv', 'uses' => 'VisitController@historique_pdv']);
+    Route::get('visit/historique_pdv', ['as' => 'visit.historique_pdv', 'uses' => 'VisitController@historique_pdv']);
+    Route::post('visit/getOutletByZoneChannel', ['as' => 'visit.getOutletByZoneChannel', 'uses' => 'VisitController@getOutletByZoneChannel']);
 
-Route::get('visit/report/{visit_id}', ['as' => 'visit.report', 'uses' => 'VisitController@report']);
-Route::post('visit/report/{visit_id}', ['as' => 'visit.report', 'uses' => 'VisitController@report']);
-
-
-Route::get('visit/position/{visit_id}/{type?}', ['as' => 'visit.position', 'uses' => 'VisitController@position']);
-
-Route::get('visit/branding', ['as' => 'visit.branding', 'uses' => 'VisitController@branding']);
-Route::post('visit/branding', ['as' => 'visit.branding', 'uses' => 'VisitController@branding']);
+    Route::get('visit/report/{visit_id}', ['as' => 'visit.report', 'uses' => 'VisitController@report']);
+    Route::post('visit/report/{visit_id}', ['as' => 'visit.report', 'uses' => 'VisitController@report']);
 
 
-Route::get('visit/order_report/{visit_id}', ['as' => 'visit.order_report', 'uses' => 'VisitController@order_report']);
-Route::post('visit/order_report/{visit_id}', ['as' => 'visit.order_report', 'uses' => 'VisitController@order_report']);
+    Route::get('visit/position/{visit_id}/{type?}', ['as' => 'visit.position', 'uses' => 'VisitController@position']);
 
-Route::post('visit/getOutletByZoneFo', ['as' => 'visit.getOutletByZoneFo', 'uses' => 'VisitController@getOutletByZoneFo']);
+    Route::get('visit/branding', ['as' => 'visit.branding', 'uses' => 'VisitController@branding']);
+    Route::post('visit/branding', ['as' => 'visit.branding', 'uses' => 'VisitController@branding']);
 
-Route::get('visit/trackingVisitsReport', ['as' => 'visit.trackingVisitsReport', 'uses' => 'VisitController@trackingVisitsReport']);
-Route::post('visit/trackingVisitsReport', ['as' => 'visit.trackingVisitsReport', 'uses' => 'VisitController@trackingVisitsReport']);
 
+    Route::get('visit/order_report/{visit_id}', ['as' => 'visit.order_report', 'uses' => 'VisitController@order_report']);
+    Route::post('visit/order_report/{visit_id}', ['as' => 'visit.order_report', 'uses' => 'VisitController@order_report']);
+
+    Route::post('visit/getOutletByZoneFo', ['as' => 'visit.getOutletByZoneFo', 'uses' => 'VisitController@getOutletByZoneFo']);
+
+    Route::get('visit/trackingVisitsReport', ['as' => 'visit.trackingVisitsReport', 'uses' => 'VisitController@trackingVisitsReport']);
+    Route::post('visit/trackingVisitsReport', ['as' => 'visit.trackingVisitsReport', 'uses' => 'VisitController@trackingVisitsReport']);
 
 
 //Report Route
 //numeric_distribution
-Route::get('report/numeric_distribution', ['as' => 'report.numeric_distribution', 'uses' => 'ReportController@numeric_distribution']);
-Route::post('report/numeric_distribution', ['as' => 'report.numeric_distribution', 'uses' => 'ReportController@numeric_distribution']);
+    Route::get('report/numeric_distribution', ['as' => 'report.numeric_distribution', 'uses' => 'ReportController@numeric_distribution']);
+    Route::post('report/numeric_distribution', ['as' => 'report.numeric_distribution', 'uses' => 'ReportController@numeric_distribution']);
 
-Route::post('report/load_av_cluster', ['as' => 'report.load_av_cluster', 'uses' => 'ReportController@load_av_cluster']);
-Route::get('report/load_av_cluster', ['as' => 'report.load_av_cluster', 'uses' => 'ReportController@load_av_cluster']);
+    Route::post('report/load_av_cluster', ['as' => 'report.load_av_cluster', 'uses' => 'ReportController@load_av_cluster']);
+    Route::get('report/load_av_cluster', ['as' => 'report.load_av_cluster', 'uses' => 'ReportController@load_av_cluster']);
 
-Route::post('report/load_av_cluster_zones', ['as' => 'report.load_av_cluster_zones', 'uses' => 'ReportController@load_av_cluster_zones']);
-Route::get('report/load_av_cluster_zones', ['as' => 'report.load_av_cluster_zones', 'uses' => 'ReportController@load_av_cluster_zones']);
+    Route::post('report/load_av_cluster_zones', ['as' => 'report.load_av_cluster_zones', 'uses' => 'ReportController@load_av_cluster_zones']);
+    Route::get('report/load_av_cluster_zones', ['as' => 'report.load_av_cluster_zones', 'uses' => 'ReportController@load_av_cluster_zones']);
 
-Route::post('report/load_av_cluster_channels', ['as' => 'report.load_av_cluster_channels', 'uses' => 'ReportController@load_av_cluster_channels']);
-Route::get('report/load_av_cluster_channels', ['as' => 'report.load_av_cluster_channels', 'uses' => 'ReportController@load_av_cluster_channels']);
+    Route::post('report/load_av_cluster_channels', ['as' => 'report.load_av_cluster_channels', 'uses' => 'ReportController@load_av_cluster_channels']);
+    Route::get('report/load_av_cluster_channels', ['as' => 'report.load_av_cluster_channels', 'uses' => 'ReportController@load_av_cluster_channels']);
 
-Route::post('report/load_av_zone', ['as' => 'report.load_av_zone', 'uses' => 'ReportController@load_av_zone']);
-Route::get('report/load_av_zone', ['as' => 'report.load_av_zone', 'uses' => 'ReportController@load_av_zone']);
+    Route::post('report/load_av_zone', ['as' => 'report.load_av_zone', 'uses' => 'ReportController@load_av_zone']);
+    Route::get('report/load_av_zone', ['as' => 'report.load_av_zone', 'uses' => 'ReportController@load_av_zone']);
 
-Route::post('report/load_av_channel', ['as' => 'report.load_av_channel', 'uses' => 'ReportController@load_av_channel']);
-Route::get('report/load_av_channel', ['as' => 'report.load_av_channel', 'uses' => 'ReportController@load_av_channel']);
+    Route::post('report/load_av_channel', ['as' => 'report.load_av_channel', 'uses' => 'ReportController@load_av_channel']);
+    Route::get('report/load_av_channel', ['as' => 'report.load_av_channel', 'uses' => 'ReportController@load_av_channel']);
 
-Route::post('report/extarait_pdv_dn_report', ['as' => 'report.extarait_pdv_dn_report', 'uses' => 'ReportController@extarait_pdv_dn_report']);
-Route::get('report/extarait_pdv_dn_report', ['as' => 'report.extarait_pdv_dn_report', 'uses' => 'ReportController@extarait_pdv_dn_report']);
+    Route::post('report/extarait_pdv_dn_report', ['as' => 'report.extarait_pdv_dn_report', 'uses' => 'ReportController@extarait_pdv_dn_report']);
+    Route::get('report/extarait_pdv_dn_report', ['as' => 'report.extarait_pdv_dn_report', 'uses' => 'ReportController@extarait_pdv_dn_report']);
 
-Route::post('report/load_extarait_pdv_dn_per_category', ['as' => 'report.load_extarait_pdv_dn_per_category', 'uses' => 'ReportController@load_extarait_pdv_dn_per_category']);
-Route::get('report/load_extarait_pdv_dn_per_category', ['as' => 'report.load_extarait_pdv_dn_per_category', 'uses' => 'ReportController@load_extarait_pdv_dn_per_category']);
+    Route::post('report/load_extarait_pdv_dn_per_category', ['as' => 'report.load_extarait_pdv_dn_per_category', 'uses' => 'ReportController@load_extarait_pdv_dn_per_category']);
+    Route::get('report/load_extarait_pdv_dn_per_category', ['as' => 'report.load_extarait_pdv_dn_per_category', 'uses' => 'ReportController@load_extarait_pdv_dn_per_category']);
 
 
-Route::get('report/dn_map', ['as' => 'report.dn_map', 'uses' => 'ReportController@dn_map']);
-Route::post('report/dn_map', ['as' => 'report.dn_map', 'uses' => 'ReportController@dn_map']);
-Route::get('report/get_data_for_dn_maps_report', ['as' => 'report.get_data_for_dn_maps_report', 'uses' => 'ReportController@get_data_for_dn_maps_report']);
-Route::post('report/get_data_for_dn_maps_report', ['as' => 'report.get_data_for_dn_maps_report', 'uses' => 'ReportController@get_data_for_dn_maps_report']);
+    Route::get('report/dn_map', ['as' => 'report.dn_map', 'uses' => 'ReportController@dn_map']);
+    Route::post('report/dn_map', ['as' => 'report.dn_map', 'uses' => 'ReportController@dn_map']);
+    Route::get('report/get_data_for_dn_maps_report', ['as' => 'report.get_data_for_dn_maps_report', 'uses' => 'ReportController@get_data_for_dn_maps_report']);
+    Route::post('report/get_data_for_dn_maps_report', ['as' => 'report.get_data_for_dn_maps_report', 'uses' => 'ReportController@get_data_for_dn_maps_report']);
 
-Route::get('report/export_map/{start_date}/{end_date}/{channel_id?}/{category_id?}/{sub_category_id?}/{product_group_id?}/{product_id?}', ['as' => 'report.export_map', 'uses' => 'ReportController@export_map']);
+    Route::get('report/export_map/{start_date}/{end_date}/{channel_id?}/{category_id?}/{sub_category_id?}/{product_group_id?}/{product_id?}', ['as' => 'report.export_map', 'uses' => 'ReportController@export_map']);
 
-/**/
+    /**/
 //shelf_share
-Route::get('report/shelf_share', ['as' => 'report.shelf_share', 'uses' => 'ReportController@shelf_share']);
-Route::post('report/shelf_share', ['as' => 'report.shelf_share', 'uses' => 'ReportController@shelf_share']);
-Route::post('report/load_shelf_cluster', ['as' => 'report.load_shelf_cluster', 'uses' => 'ReportController@load_shelf_cluster']);
-Route::post('report/load_shelf_zone', ['as' => 'report.load_shelf_zone', 'uses' => 'ReportController@load_shelf_zone']);
-Route::post('report/load_shelf_channel', ['as' => 'report.load_shelf_channel', 'uses' => 'ReportController@load_shelf_channel']);
+    Route::get('report/shelf_share', ['as' => 'report.shelf_share', 'uses' => 'ReportController@shelf_share']);
+    Route::post('report/shelf_share', ['as' => 'report.shelf_share', 'uses' => 'ReportController@shelf_share']);
+    Route::post('report/load_shelf_cluster', ['as' => 'report.load_shelf_cluster', 'uses' => 'ReportController@load_shelf_cluster']);
+    Route::post('report/load_shelf_zone', ['as' => 'report.load_shelf_zone', 'uses' => 'ReportController@load_shelf_zone']);
+    Route::post('report/load_shelf_channel', ['as' => 'report.load_shelf_channel', 'uses' => 'ReportController@load_shelf_channel']);
 
-Route::post('report/load_shelf_zone_pie_chart', ['as' => 'report.load_shelf_zone_pie_chart', 'uses' => 'ReportController@load_shelf_zone_pie_chart']);
-Route::post('report/load_shelf_cluster_zones', ['as' => 'report.load_shelf_cluster_zones', 'uses' => 'ReportController@load_shelf_cluster_zones']);
-Route::post('report/load_shelf_channel_pie_chart', ['as' => 'report.load_shelf_channel_pie_chart', 'uses' => 'ReportController@load_shelf_channel_pie_chart']);
-Route::post('report/load_shelf_cluster_channels', ['as' => 'report.load_shelf_cluster_channels', 'uses' => 'ReportController@load_shelf_cluster_channels']);
+    Route::post('report/load_shelf_zone_pie_chart', ['as' => 'report.load_shelf_zone_pie_chart', 'uses' => 'ReportController@load_shelf_zone_pie_chart']);
+    Route::post('report/load_shelf_cluster_zones', ['as' => 'report.load_shelf_cluster_zones', 'uses' => 'ReportController@load_shelf_cluster_zones']);
+    Route::post('report/load_shelf_channel_pie_chart', ['as' => 'report.load_shelf_channel_pie_chart', 'uses' => 'ReportController@load_shelf_channel_pie_chart']);
+    Route::post('report/load_shelf_cluster_channels', ['as' => 'report.load_shelf_cluster_channels', 'uses' => 'ReportController@load_shelf_cluster_channels']);
 
 
-Route::post('report/extarait_pdv_shelf_share_report', ['as' => 'report.extarait_pdv_shelf_share_report', 'uses' => 'ReportController@extarait_pdv_shelf_share_report']);
-Route::get('report/extarait_pdv_shelf_share_report', ['as' => 'report.extarait_pdv_shelf_share_report', 'uses' => 'ReportController@extarait_pdv_shelf_share_report']);
+    Route::post('report/extarait_pdv_shelf_share_report', ['as' => 'report.extarait_pdv_shelf_share_report', 'uses' => 'ReportController@extarait_pdv_shelf_share_report']);
+    Route::get('report/extarait_pdv_shelf_share_report', ['as' => 'report.extarait_pdv_shelf_share_report', 'uses' => 'ReportController@extarait_pdv_shelf_share_report']);
 
-Route::post('report/load_extarait_pdv_shelf_share_per_category', ['as' => 'report.load_extarait_pdv_shelf_share_per_category', 'uses' => 'ReportController@load_extarait_pdv_shelf_share_per_category']);
-Route::get('report/load_extarait_pdv_shelf_share_per_category', ['as' => 'report.load_extarait_pdv_shelf_share_per_category', 'uses' => 'ReportController@load_extarait_pdv_shelf_share_per_category']);
+    Route::post('report/load_extarait_pdv_shelf_share_per_category', ['as' => 'report.load_extarait_pdv_shelf_share_per_category', 'uses' => 'ReportController@load_extarait_pdv_shelf_share_per_category']);
+    Route::get('report/load_extarait_pdv_shelf_share_per_category', ['as' => 'report.load_extarait_pdv_shelf_share_per_category', 'uses' => 'ReportController@load_extarait_pdv_shelf_share_per_category']);
 //
-Route::get('report/shelf_map', ['as' => 'report.shelf_map', 'uses' => 'ReportController@shelf_map']);
-Route::post('report/shelf_map', ['as' => 'report.shelf_map', 'uses' => 'ReportController@shelf_map']);
-Route::get('report/get_data_for_shelf_maps_report', ['as' => 'report.get_data_for_shelf_maps_report', 'uses' => 'ReportController@get_data_for_shelf_maps_report']);
-Route::post('report/get_data_for_shelf_maps_report', ['as' => 'report.get_data_for_shelf_maps_report', 'uses' => 'ReportController@get_data_for_shelf_maps_report']);
+    Route::get('report/shelf_map', ['as' => 'report.shelf_map', 'uses' => 'ReportController@shelf_map']);
+    Route::post('report/shelf_map', ['as' => 'report.shelf_map', 'uses' => 'ReportController@shelf_map']);
+    Route::get('report/get_data_for_shelf_maps_report', ['as' => 'report.get_data_for_shelf_maps_report', 'uses' => 'ReportController@get_data_for_shelf_maps_report']);
+    Route::post('report/get_data_for_shelf_maps_report', ['as' => 'report.get_data_for_shelf_maps_report', 'uses' => 'ReportController@get_data_for_shelf_maps_report']);
 
 //price report
-Route::get('report/price_monotoring', ['as' => 'report.price_monotoring', 'uses' => 'ReportController@price_monotoring']);
-Route::post('report/price_monotoring', ['as' => 'report.price_monotoring', 'uses' => 'ReportController@price_monotoring']);
+    Route::get('report/price_monotoring', ['as' => 'report.price_monotoring', 'uses' => 'ReportController@price_monotoring']);
+    Route::post('report/price_monotoring', ['as' => 'report.price_monotoring', 'uses' => 'ReportController@price_monotoring']);
 
-Route::get('report/load_price_monotoring_per_cluster', ['as' => 'report.load_price_monotoring_per_cluster', 'uses' => 'ReportController@load_price_monotoring_per_cluster']);
-Route::post('report/load_price_monotoring_per_cluster', ['as' => 'report.load_price_monotoring_per_cluster', 'uses' => 'ReportController@load_price_monotoring_per_cluster']);
+    Route::get('report/load_price_monotoring_per_cluster', ['as' => 'report.load_price_monotoring_per_cluster', 'uses' => 'ReportController@load_price_monotoring_per_cluster']);
+    Route::post('report/load_price_monotoring_per_cluster', ['as' => 'report.load_price_monotoring_per_cluster', 'uses' => 'ReportController@load_price_monotoring_per_cluster']);
 
 
 //stock issue
-Route::get('report/stock_issue', ['as' => 'report.stock_issue', 'uses' => 'ReportController@stock_issue']);
+    Route::get('report/stock_issue', ['as' => 'report.stock_issue', 'uses' => 'ReportController@stock_issue']);
 
 //Fo Report Route
-Route::get('fo_report/foProfile/', ['as' => 'fo_report.foProfile', 'uses' => 'FoReportController@foProfile']);
-Route::post('fo_report/foProfile/', ['as' => 'fo_report.foProfile', 'uses' => 'FoReportController@foProfile']);
+    Route::get('fo_report/foProfile/', ['as' => 'fo_report.foProfile', 'uses' => 'FoReportController@foProfile']);
+    Route::post('fo_report/foProfile/', ['as' => 'fo_report.foProfile', 'uses' => 'FoReportController@foProfile']);
 
 
-Route::get('report/store_album', ['as' => 'report.store_album', 'uses' => 'ReportController@store_album']);
-Route::post('report/store_album', ['as' => 'report.store_album', 'uses' => 'ReportController@store_album']);
+    Route::get('report/store_album', ['as' => 'report.store_album', 'uses' => 'ReportController@store_album']);
+    Route::post('report/store_album', ['as' => 'report.store_album', 'uses' => 'ReportController@store_album']);
 
 //Outlet Routes
-Route::resource('outlet', 'OutletController', ['only' => ['index', 'create', 'postOutlet']]);
+    Route::resource('outlet', 'OutletController', ['only' => ['index', 'create', 'postOutlet']]);
 
-Route::post('outlet/index', ['as' => 'outlet.index', 'uses' => 'OutletController@index']);
-Route::get('outlet/index', ['as' => 'outlet.index', 'uses' => 'OutletController@index']);
+    Route::post('outlet/index', ['as' => 'outlet.index', 'uses' => 'OutletController@index']);
+    Route::get('outlet/index', ['as' => 'outlet.index', 'uses' => 'OutletController@index']);
 
-Route::post('outlet/postOutlet', ['as' => 'outlet.postOutlet', 'uses' => 'OutletController@postOutlet']);
-Route::get('outlet/edit/{id}', ['as' => 'outlet.edit', 'uses' => 'OutletController@edit']);
-Route::get('outlet/delete/{id}', ['as' => 'outlet.delete', 'uses' => 'OutletController@delete']);
-Route::get('outlet/getOutlets/', ['as' => 'outlet.getOutlets', 'uses' => 'OutletController@getOutlets']);
-Route::post('outlet/getOutlets/', ['as' => 'outlet.getOutlets', 'uses' => 'OutletController@getOutlets']);
-Route::get('outlet/activate/{id}', ['as' => 'outlet.activate', 'uses' => 'OutletController@activate']);
-Route::get('outlet/desactivate/{id}', ['as' => 'outlet.desactivate', 'uses' => 'OutletController@desactivate']);
-Route::get('outlet/view/{id}', ['as' => 'outlet.view', 'uses' => 'OutletController@view']);
+    Route::post('outlet/postOutlet', ['as' => 'outlet.postOutlet', 'uses' => 'OutletController@postOutlet']);
+    Route::get('outlet/edit/{id}', ['as' => 'outlet.edit', 'uses' => 'OutletController@edit']);
+    Route::get('outlet/delete/{id}', ['as' => 'outlet.delete', 'uses' => 'OutletController@delete']);
+    Route::get('outlet/getOutlets/', ['as' => 'outlet.getOutlets', 'uses' => 'OutletController@getOutlets']);
+    Route::post('outlet/getOutlets/', ['as' => 'outlet.getOutlets', 'uses' => 'OutletController@getOutlets']);
+    Route::get('outlet/activate/{id}', ['as' => 'outlet.activate', 'uses' => 'OutletController@activate']);
+    Route::get('outlet/desactivate/{id}', ['as' => 'outlet.desactivate', 'uses' => 'OutletController@desactivate']);
+    Route::get('outlet/view/{id}', ['as' => 'outlet.view', 'uses' => 'OutletController@view']);
 
-Route::get('outlet/ha_outlets', ['as' => 'outlet.ha_outlets', 'uses' => 'OutletController@ha_outlets']);
-Route::post('outlet/ha_outlets', ['as' => 'outlet.ha_outlets', 'uses' => 'OutletController@ha_outlets']);
+    Route::get('outlet/ha_outlets', ['as' => 'outlet.ha_outlets', 'uses' => 'OutletController@ha_outlets']);
+    Route::post('outlet/ha_outlets', ['as' => 'outlet.ha_outlets', 'uses' => 'OutletController@ha_outlets']);
 
-Route::get('outlet/getOutletsForHaProducts/', ['as' => 'outlet.getOutletsForHaProducts', 'uses' => 'OutletController@getOutletsForHaProducts']);
-Route::post('outlet/getOutletsForHaProducts/', ['as' => 'outlet.getOutletsForHaProducts', 'uses' => 'OutletController@getOutletsForHaProducts']);
+    Route::get('outlet/getOutletsForHaProducts/', ['as' => 'outlet.getOutletsForHaProducts', 'uses' => 'OutletController@getOutletsForHaProducts']);
+    Route::post('outlet/getOutletsForHaProducts/', ['as' => 'outlet.getOutletsForHaProducts', 'uses' => 'OutletController@getOutletsForHaProducts']);
 
-Route::get('outlet/geolocalisation', ['as' => 'outlet.geolocalisation', 'uses' => 'OutletController@geolocalisation']);
-Route::post('outlet/geolocalisation', ['as' => 'outlet.geolocalisation', 'uses' => 'OutletController@geolocalisation']);
+    Route::get('outlet/geolocalisation', ['as' => 'outlet.geolocalisation', 'uses' => 'OutletController@geolocalisation']);
+    Route::post('outlet/geolocalisation', ['as' => 'outlet.geolocalisation', 'uses' => 'OutletController@geolocalisation']);
 
+});
 
 Route::group(['prefix' => 'admin', 'middleware' => 'isAdmin', 'namespace' => 'Admin', 'as' => 'admin.'], function () {
 
@@ -408,7 +414,6 @@ Route::group(['prefix' => 'admin', 'middleware' => 'isAdmin', 'namespace' => 'Ad
 
 
 });
-
 
 
 Route::post('changeLang', ['as' => 'changeLang', 'uses' => 'LanguageController@changeLang']);

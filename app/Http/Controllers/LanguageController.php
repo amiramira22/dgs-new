@@ -23,7 +23,7 @@ class LanguageController {
         $lan = $request->lang;
 
 
-        \Session::put('connected_user_lang', $request->lang);
+        \request()->session()->put('connected_user_lang', $request->lang);
         $save = array();
         $save['lang'] = $request->lang;
 

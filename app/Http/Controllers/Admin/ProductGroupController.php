@@ -126,7 +126,7 @@ class ProductGroupController extends Controller {
 //        }
         //dd($save);
         // Store data for only a single request and destory
-        Session::flash('message', 'Product Group has been saved successfully.');
+        request()->session()->flash('message', 'Product Group has been saved successfully.');
         // Redirect to `user.index` route
         // Use route:list to view the `Action` or where this routes going to
         return redirect()->route('admin.product_group.index');
@@ -135,7 +135,7 @@ class ProductGroupController extends Controller {
     public function delete($id) {
         $this->productGroupRepository->deleteProductGroup($id);
         // Store data for only a single request and destory
-        Session::flash('message', 'Product Group has been deleted.');
+        request()->session()->flash('message', 'Product Group has been deleted.');
         // Redirect to `user.index` route
         // Use route:list to view the `Action` or where this routes going to
         return redirect()->route('admin.product_group.index');
@@ -144,7 +144,7 @@ class ProductGroupController extends Controller {
         $save['id'] = $id;
         $save['active'] = 1;
         $this->productGroupRepository->addProductGroup($save, $id);
-        Session::flash('message', 'Product Group has been updated successfully.');
+        request()->session()->flash('message', 'Product Group has been updated successfully.');
         // Redirect to `user.index` route
         // Use route:list to view the `Action` or where this routes going to
         return redirect()->route('admin.product_group.index');
@@ -154,7 +154,7 @@ class ProductGroupController extends Controller {
         $save['id'] = $id;
         $save['active'] = 0;
         $this->productGroupRepository->addProductGroup($save, $id);
-        Session::flash('message', 'Product Group has been updated successfully.');
+        request()->session()->flash('message', 'Product Group has been updated successfully.');
         // Redirect to `user.index` route
         // Use route:list to view the `Action` or where this routes going to
         return redirect()->route('admin.product_group.index');

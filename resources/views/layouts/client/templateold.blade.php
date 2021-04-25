@@ -100,12 +100,12 @@
 
                     <div class="row">
                         <div class="col-md-12">
-                            @if(Session::has('message'))
+                            @if(request()->session()->has('message'))
 
                             <div class="alert alert-success">
 
                                 <a class="close" data-dismiss="alert">Ã—</a>
-                                {{ Session::get('message') }}
+                                {{ request()->session()->get('message') }}
                             </div>
                             @endif
 

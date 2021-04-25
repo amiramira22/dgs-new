@@ -98,7 +98,7 @@ class ChannelController extends Controller {
         $id_channel_inserted = $this->channelRepository->addChannel($save, $channel_id);
 
         // Store data for only a single request and destory
-        Session::flash('message', 'Channel has been saved successfully.');
+        request()->session()->flash('message', 'Channel has been saved successfully.');
         // Redirect to `user.index` route
         // Use route:list to view the `Action` or where this routes going to
         return redirect()->route('admin.channel.index');
@@ -107,7 +107,7 @@ class ChannelController extends Controller {
     public function delete($id) {
         $this->channelRepository->deleteChannel($id);
         // Store data for only a single request and destory
-        Session::flash('message', 'Channel has been deleted.');
+        request()->session()->flash('message', 'Channel has been deleted.');
         // Redirect to `user.index` route
         // Use route:list to view the `Action` or where this routes going to
         return redirect()->route('admin.channel.index');
@@ -117,7 +117,7 @@ class ChannelController extends Controller {
         $save['id'] = $id;
         $save['active'] = 1;
         $this->channelRepository->addCategory($save, $id);
-        Session::flash('message', 'channel has been updated successfully.');
+        request()->session()->flash('message', 'channel has been updated successfully.');
         // Redirect to `user.index` route
         // Use route:list to view the `Action` or where this routes going to
         return redirect()->route('admin.channel.index');
@@ -127,7 +127,7 @@ class ChannelController extends Controller {
         $save['id'] = $id;
         $save['active'] = 0;
         $this->channelRepository->addCategory($save, $id);
-        Session::flash('message', 'channel has been updated successfully.');
+        request()->session()->flash('message', 'channel has been updated successfully.');
         // Redirect to `user.index` route
         // Use route:list to view the `Action` or where this routes going to
         return redirect()->route('admin.channel.index');

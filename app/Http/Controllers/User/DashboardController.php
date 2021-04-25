@@ -38,9 +38,9 @@ class DashboardController extends Controller {
         $save['time'] = date('H:i:s');
 
 
-        Session::flash('message ', ' successfully.');
+        request()->session()->flash('message ', ' successfully.');
         $this->attendanceRepository->store($save);
-        Session::flash('message ', ' successfully.');
+        request()->session()->flash('message ', ' successfully.');
 
         // Redirect to `user.index` route
         // Use route:list to view the `Action` or where this routes going to

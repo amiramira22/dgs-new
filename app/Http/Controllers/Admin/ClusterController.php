@@ -123,7 +123,7 @@ class ClusterController extends Controller {
 //        }
         //dd($save);
         // Store data for only a single request and destory
-        Session::flash('message', 'Cluster has been saved successfully.');
+        request()->session()->flash('message', 'Cluster has been saved successfully.');
         // Redirect to `user.index` route
         // Use route:list to view the `Action` or where this routes going to
         return redirect()->route('admin.cluster.index');
@@ -132,7 +132,7 @@ class ClusterController extends Controller {
     public function delete($id) {
         $this->clusterRepository->deleteCluster($id);
         // Store data for only a single request and destory
-        Session::flash('message', 'Cluster has been deleted.');
+        request()->session()->flash('message', 'Cluster has been deleted.');
         // Redirect to `user.index` route
         // Use route:list to view the `Action` or where this routes going to
         return redirect()->route('admin.cluster.index');
@@ -142,7 +142,7 @@ class ClusterController extends Controller {
         $save['id'] = $id;
         $save['active'] = 1;
         $this->clusterRepository->addCluster($save, $id);
-        Session::flash('message', 'cluster has been updated successfully.');
+        request()->session()->flash('message', 'cluster has been updated successfully.');
         // Redirect to `user.index` route
         // Use route:list to view the `Action` or where this routes going to
         return redirect()->route('admin.cluster.index');
@@ -152,7 +152,7 @@ class ClusterController extends Controller {
         $save['id'] = $id;
         $save['active'] = 0;
         $this->clusterRepository->addCluster($save, $id);
-        Session::flash('message', 'cluster has been updated successfully.');
+        request()->session()->flash('message', 'cluster has been updated successfully.');
         // Redirect to `user.index` route
         // Use route:list to view the `Action` or where this routes going to
         return redirect()->route('admin.cluster.index');

@@ -122,7 +122,7 @@ class SubCategoryController extends Controller {
 //        }
         //dd($save);
         // Store data for only a single request and destory
-        Session::flash('message', 'Sub Category has been saved successfully.');
+        request()->session()->flash('message', 'Sub Category has been saved successfully.');
         // Redirect to `user.index` route
         // Use route:list to view the `Action` or where this routes going to
         return redirect()->route('admin.sub_category.index');
@@ -131,7 +131,7 @@ class SubCategoryController extends Controller {
     public function delete($id) {
         $this->subCategoryRepository->deleteSubCategory($id);
         // Store data for only a single request and destory
-        Session::flash('message', 'Sub Category has been deleted.');
+        request()->session()->flash('message', 'Sub Category has been deleted.');
         // Redirect to `user.index` route
         // Use route:list to view the `Action` or where this routes going to
         return redirect()->route('admin.sub_category.index');
@@ -141,7 +141,7 @@ class SubCategoryController extends Controller {
         $save['id'] = $id;
         $save['active'] = 1;
         $this->subCategoryRepository->addSubCategory($save, $id);
-        Session::flash('message', 'Sub Category has been updated successfully.');
+        request()->session()->flash('message', 'Sub Category has been updated successfully.');
         // Redirect to `user.index` route
         // Use route:list to view the `Action` or where this routes going to
         return redirect()->route('admin.sub_category.index');
@@ -151,7 +151,7 @@ class SubCategoryController extends Controller {
         $save['id'] = $id;
         $save['active'] = 0;
         $this->subCategoryRepository->addSubCategory($save, $id);
-        Session::flash('message', 'Sub Category has been updated successfully.');
+        request()->session()->flash('message', 'Sub Category has been updated successfully.');
         // Redirect to `user.index` route
         // Use route:list to view the `Action` or where this routes going to
         return redirect()->route('admin.sub_category.index');

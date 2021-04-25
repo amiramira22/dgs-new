@@ -189,7 +189,7 @@ class ProductController extends Controller {
 
         //dd($save);
         // Store data for only a single request and destory
-        Session::flash('message', 'Product has been saved successfully.');
+        request()->session()->flash('message', 'Product has been saved successfully.');
         // Redirect to `user.index` route
         // Use route:list to view the `Action` or where this routes going to
         return redirect()->route('admin.product.index');
@@ -198,7 +198,7 @@ class ProductController extends Controller {
     public function delete($id) {
         $this->productRepository->deleteProduct($id);
         // Store data for only a single request and destory
-        Session::flash('message', 'Product has been deleted.');
+        request()->session()->flash('message', 'Product has been deleted.');
         // Redirect to `user.index` route
         // Use route:list to view the `Action` or where this routes going to
         return redirect()->route('admin.product.index');
@@ -208,7 +208,7 @@ class ProductController extends Controller {
         $save['id'] = $id;
         $save['active'] = 1;
         $this->productRepository->addProduct($save, $id);
-        Session::flash('message', 'product has been updated successfully.');
+        request()->session()->flash('message', 'product has been updated successfully.');
         // Redirect to `user.index` route
         // Use route:list to view the `Action` or where this routes going to
         return redirect()->route('admin.product.index');
@@ -218,7 +218,7 @@ class ProductController extends Controller {
         $save['id'] = $id;
         $save['active'] = 0;
         $this->productRepository->addProduct($save, $id);
-        Session::flash('message', 'product has been updated successfully.');
+        request()->session()->flash('message', 'product has been updated successfully.');
         // Redirect to `user.index` route
         // Use route:list to view the `Action` or where this routes going to
         return redirect()->route('admin.product.index');

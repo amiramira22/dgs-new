@@ -258,7 +258,7 @@ class OutletController extends Controller {
         $id_outlet_inserted = $this->outletRepository->addOutlet($save, $outlet_id);
         //dd($id_outlet_inserted);
         // Store data for only a single request and destory
-        Session::flash('message', 'Outlet has been saved successfully.');
+        request()->session()->flash('message', 'Outlet has been saved successfully.');
         // Redirect to `user.index` route
         // Use route:list to view the `Action` or where this routes going to
         return redirect()->route('admin.outlet.index');
@@ -267,7 +267,7 @@ class OutletController extends Controller {
     public function delete($id) {
         $this->outletRepository->deleteOutlet($id);
         // Store data for only a single request and destory
-        Session::flash('message', 'Outlet has been deleted.');
+        request()->session()->flash('message', 'Outlet has been deleted.');
         // Redirect to `user.index` route
         // Use route:list to view the `Action` or where this routes going to
         return redirect()->route('admin.outlet.index');
@@ -277,7 +277,7 @@ class OutletController extends Controller {
         $save['id'] = $id;
         $save['active'] = 1;
         $this->outletRepository->addOutlet($save, $id);
-        Session::flash('message', 'outlet has been updated successfully.');
+        request()->session()->flash('message', 'outlet has been updated successfully.');
         // Redirect to `user.index` route
         // Use route:list to view the `Action` or where this routes going to
         return redirect()->route('admin.outlet.index');
@@ -288,7 +288,7 @@ class OutletController extends Controller {
         $save['active'] = 0;
         $this->outletRepository->addOutlet($save, $id);
 //        $this->outletRepository->update($id, $save);
-        Session::flash('message', 'outlet has been updated successfully.');
+        request()->session()->flash('message', 'outlet has been updated successfully.');
         // Redirect to `user.index` route
         // Use route:list to view the `Action` or where this routes going to
         return redirect()->route('admin.outlet.index');

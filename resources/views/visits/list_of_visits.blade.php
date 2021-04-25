@@ -44,43 +44,19 @@
 </style>
 
 <div class="m-portlet m-portlet--tabs">
-    <!--    <div class="m-portlet__head">
-            <div class="m-portlet__head-caption">
-                <div class="m-portlet__head-title">
-                    <span class="m-portlet__head-icon">
-                        <i class="flaticon-list-3 m--font-danger"></i>
-                    </span>
-                    <h3 class="m-portlet__head-text m--font-danger">
-                        @if(isset($subTitle)) {{ $subTitle }}  @endif
-                    </h3>
-                </div>
-                <div class="m-portlet__head-tools">
-                    <ul class="m-portlet__nav">
-                        <li class="m-portlet__nav-item">
-    
-                        </li>
-                        <li class="m-portlet__nav-item"></li>
-    
-                    </ul>
-                </div>
-            </div>
-        </div>-->
+
 
 
     <div class="m-portlet__head">
         <div class="m-portlet__head-tools">
             <ul class="nav nav-tabs m-tabs-line m-tabs-line--danger m-tabs-line--2x" role="tablist">
                 <li class="nav-item m-tabs__item">
-                    <a class="nav-link m-tabs__link active show" data-toggle="tab" href="#m_tabs_1" role="tab" aria-selected="true">
-                        @if(isset($subTitle)) {{ $subTitle }}  @endif
+                    <a class="nav-link m-tabs__link active show" data-toggle="tab" href="#m_tabs_1"
+                       role="tab" aria-selected="true">
+                        Visite Temps Réel
                     </a>
                 </li>
 
-                <li class="nav-item m-tabs__item">
-                    <a class="nav-link m-tabs__link" data-toggle="tab" href="#m_tabs_2" role="tab" aria-selected="false">
-                        @lang('project.GPS_MONITORING')
-                    </a>
-                </li>
             </ul>
         </div>
     </div>

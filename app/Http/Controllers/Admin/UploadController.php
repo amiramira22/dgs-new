@@ -67,13 +67,13 @@ class UploadController extends Controller {
             $save['file'] = $filename;
         }
         $id_file_inserted = $this->uploadRepository->addFile($save);
-        Session::flash('message', 'File has been saved successfully.');
+        request()->session()->flash('message', 'File has been saved successfully.');
         return redirect()->route('admin.upload.index');
     }
 
     function deleteFile($id) {
         $this->uploadRepository->deleteFile($id);
-        Session::flash('message', 'File has been deleted.');
+        request()->session()->flash('message', 'File has been deleted.');
         return redirect()->route('admin.upload.index');
     }
 

@@ -79,8 +79,10 @@
             <div class="row">
                 <div class="col-lg-8"></div>
                 <div class="col-lg-4">
-                    <button type="submit" class="btn m-btn--pill m-btn--air btn-outline-danger"> @lang('project.SUBMIT')</button>
-                    <button type="reset" class="btn m-btn--pill m-btn--air btn-outline-primary"> @lang('project.CANCEL')</button>
+                    <button type="submit" class="btn m-btn--pill m-btn--air btn-outline-danger">
+                        @lang('project.SUBMIT')</button>
+                    <button type="reset" class="btn m-btn--pill m-btn--air btn-outline-primary">
+                        @lang('project.CANCEL')</button>
                 </div>
             </div>
         </div>

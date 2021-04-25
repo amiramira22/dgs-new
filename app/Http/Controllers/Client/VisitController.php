@@ -70,7 +70,7 @@ class VisitController extends Controller {
     
      public function destroy($id) {
         $this->visitRepository->destroy($id);
-        Session::flash('message', 'Visit has been deleted successfully.');
+        request()->session()->flash('message', 'Visit has been deleted successfully.');
         // Redirect to `user.index` route
         // Use route:list to view the `Action` or where this routes going to
         return redirect()->route('client.visit.index');

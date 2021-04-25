@@ -88,28 +88,36 @@
                             <th colspan="2"></th>
 
                             <?php foreach ($dates as $date) { ?>
-                            <th class="text-center" colspan="3"><?php echo format_qmw_date($date_type, $date); ?></th>
+                            <th class="text-center" colspan="7"><?php echo format_qmw_date($date_type, $date); ?></th>
                             <?php } ?>
                         </tr>
-
                         <tr>
-                            <th>Rank</th>
-                            <th>Brand</th>
-
+                            <th></th>
+                            <th></th>
+                            <?php foreach ($dates as $date) { ?>
+                            <th></th>
+                            <th></th>
+                            <th colspan="4">Niveau des yeux</th>
+                            <?php } ?>
+                        </tr>
+                        <tr>
+                            <th></th>
+                            <th></th>
                             <?php foreach ($dates as $date) { ?>
                             <th>Shelf</th>
-                            <th>Metrage</th>
                             <th>%</th>
+                            <th>Niveau chapeau</th>
+                            <th>Niveau des yeux</th>
+                            <th>Niveau des mains</th>
+                            <th>Niveau des pieds</th>
                             <?php } ?>
                         </tr>
                         </thead>
-
                         <tbody>
 
                         <?php
                         $i = 0;
                         foreach ($components as $brand_name => $componentDates) {
-
                         $i++;
                         ?>
                         <tr>
@@ -126,26 +134,50 @@
                                 ?>
                             </td>
 
-                            <td class="metrage">
-                                <?php
-                                if (isset($componentDates[$date])) {
-                                    //echo $componentDates[$date][1];
-                                    echo number_format(($componentDates[$date][1]), 2, '.', '');
-                                    //number_format($total_avg, 2, '.', '');
-                                } else
-                                    echo '-';
-                                ?>
-                            </td>
-
                             <td class="perc">
                                 <?php
-                                if (isset($componentDates[$date]) && $sum_metrage_date[$date] != 0) {
-                                    echo number_format(($componentDates[$date][1] / $sum_metrage_date[$date]) * 100, 2);
+                                if (isset($componentDates[$date]) && $sum_shelf_date[$date] != 0) {
+                                    echo number_format(($componentDates[$date][0] / $sum_shelf_date[$date]) * 100, 2);
+                                } else
+                                    echo '-';
+                                ?>
+                            </td>
+                            <td class="chapeau">
+                                <?php
+                                if (isset($componentDates[$date]) && $sum_chapeau_date[$date] != 0) {
+                                    echo number_format(($componentDates[$date][2] / $sum_chapeau_date[$date]) * 100, 2);
+
                                 } else
                                     echo '-';
                                 ?>
                             </td>
 
+                            <td class="yeux">
+                                <?php
+                                if (isset($componentDates[$date]) && $sum_yeux_date[$date] != 0) {
+                                    echo number_format(($componentDates[$date][3] / $sum_yeux_date[$date]) * 100, 2);
+                                } else
+                                    echo '-';
+                                ?>
+                            </td>
+
+                            <td class="main">
+                                <?php
+                                if (isset($componentDates[$date]) && $sum_main_date[$date] != 0) {
+                                    echo number_format(($componentDates[$date][4] / $sum_main_date[$date]) * 100, 2);
+                                } else
+                                    echo '-';
+                                ?>
+                            </td>
+
+                            <td class="pied">
+                                <?php
+                                if (isset($componentDates[$date]) && $sum_pied_date[$date] != 0) {
+                                    echo number_format(($componentDates[$date][5] / $sum_pied_date[$date]) * 100, 2);
+                                } else
+                                    echo '-';
+                                ?>
+                            </td>
 
                         <?php } // end foreach dates       ?>
 
@@ -153,8 +185,11 @@
                         <tr>
                             <td colspan="2">Total</td>
                             <td class="totalshelf" id="sum1"></td>
-                            <td class="totalmetrage" id="sum3"></td>
                             <td class="totalperc" id="sum2"></td>
+                            <td class="totalchapeau" id="sum3"></td>
+                            <td class="totalyeux" id="sum4"></td>
+                            <td class="totalmain" id="sum5"></td>
+                            <td class="totalpied" id="sum6"></td>
                         </tr>
                         </tbody>
                     </table>
@@ -164,6 +199,7 @@
                 <br>
                 <!--<div id="shelf_pie_chart" style="min-width: 310px; max-width: 600px; height: 400px; margin: 0 auto"></div>-->
                 <div style="height:500px; width:100%;" id="shelf_pie_chart"></div>
+                <div style="height:500px; width:100%;" id="Niveau-dex-yeux"></div>
 
 
             </div>
@@ -229,30 +265,35 @@ $cluster_name = $cluster->name;
 ?>
 <script>
 
+
     <?php
     // pie chart
     $data_pie_chart = [];
+    $XCategories = array();
     foreach ($components as $brand_name => $componentDates) {
         foreach ($dates as $date) {
-            if ($sum_metrage_date[$date] != 0)
-                $total_avg = number_format(($componentDates[$date][1] / $sum_metrage_date[$date]) * 100, 2, '.', '');
+            ?>
+
+        <?php
+            if ($sum_shelf_date[$date] != 0)
+                $total_avg = number_format(($componentDates[$date][0] / $sum_shelf_date[$date]) * 100, 2, '.', '');
             else $total_avg = 0;
             $row_data['name'] = $brand_name;
             $row_data['y'] = $total_avg + 0;
             $brand_color = App\Entities\Brand::where('name', $brand_name)->first()->color;
             $row_data['color'] = $brand_color;
             $data_pie_chart[] = $row_data;
+            $XCategories[] = strval($brand_name);
         }
+
     }
     $brand_data = json_encode($data_pie_chart);
+    $XCategories = json_encode($XCategories);
     ?>
 
-    console.log(<?php echo $brand_data ?>);
     showchart(<?php echo $brand_data ?>);
 
     function showchart(data) {
-
-
         var chart = AmCharts.makeChart("shelf_pie_chart", {
             "type": "pie",
             "theme": "light",
@@ -284,7 +325,78 @@ $cluster_name = $cluster->name;
 
     }
 </script>
+<script>
 
+
+    Highcharts.chart('Niveau-dex-yeux', {
+        chart: {
+            type: 'column',
+            options3d: {
+                enabled: true,
+                alpha: 15,
+                beta: 15,
+                viewDistance: 25,
+                depth: 40
+            }
+        },
+
+        title: {
+            text: 'Total fruit consumption, grouped by gender'
+        },
+
+        xAxis: {
+            categories:['Niveau chapeau','Niveau des yeux','Niveau des mains','Niveau des pieds'],
+
+            labels: {
+                skew3d: true,
+                style: {
+                    fontSize: '16px'
+                }
+            }
+        },
+
+        yAxis: {
+            allowDecimals: false,
+            min: 0,
+            title: {
+                text: 'Number of fruits',
+                skew3d: true
+            }
+        },
+
+        tooltip: {
+            headerFormat: '<b>{point.key}</b><br>',
+            pointFormat: '<span style="color:{series.color}">\u25CF</span> {series.name}: {point.y} / {point.stackTotal}'
+        },
+        plotOptions: {
+            column: {
+                stacking: 'normal',
+                depth: 40
+            }
+        },
+
+        series: [
+            {
+                name: 'Chapeau',
+                data: [5, 3, 4, 7],
+                stack: 'Niveau',
+                color: '#ff0000'
+            }, {
+                name: 'yeux',
+                data: [3, 4, 4, 2, 5],
+                stack: 'Niveau',
+                color: '#e1ff00'
+
+            }, {
+                name: 'main',
+                data: [2, 5, 6, 2, 1],
+                stack: 'Niveau',
+                color: '#001eff'
+
+            }
+        ]
+    });
+</script>
 
 <script>
     $(function () {
@@ -300,23 +412,6 @@ $cluster_name = $cluster->name;
         }
 
         tally('td.totalshelf');
-    });
-
-</script>
-<script>
-    $(function () {
-        function tally(selector) {
-            $(selector).each(function () {
-                var totalmetrage = 0,
-                    column = $(this).siblings(selector).addBack().index(this);
-                $(this).parents().prevUntil(':has(' + selector + ')').each(function () {
-                    totalmetrage += parseFloat($('td.metrage:eq(' + column + ')', this).html()) || 0;
-                })
-                $(this).html(totalmetrage.toFixed(2));
-            });
-        }
-
-        tally('td.totalmetrage');
     });
 
 </script>
@@ -337,4 +432,79 @@ $cluster_name = $cluster->name;
         tally('td.totalperc');
     });
 
+
 </script>
+
+<script>
+    $(function () {
+        function tally(selector) {
+            $(selector).each(function () {
+                var totalchapeau = 0,
+                    column = $(this).siblings(selector).addBack().index(this);
+                $(this).parents().prevUntil(':has(' + selector + ')').each(function () {
+                    totalchapeau += parseFloat($('td.chapeau:eq(' + column + ')', this).html()) || 0;
+                })
+                $(this).html(totalchapeau.toFixed(2));
+            });
+        }
+
+        tally('td.totalchapeau');
+    });
+</script>
+
+<script>
+    $(function () {
+        function tally(selector) {
+            $(selector).each(function () {
+                var totalyeux = 0,
+                    column = $(this).siblings(selector).addBack().index(this);
+                $(this).parents().prevUntil(':has(' + selector + ')').each(function () {
+                    totalyeux += parseFloat($('td.yeux:eq(' + column + ')', this).html()) || 0;
+                })
+                $(this).html(totalyeux.toFixed(2));
+            });
+        }
+
+        tally('td.totalyeux');
+    });
+</script>
+
+<script>
+    $(function () {
+        function tally(selector) {
+            $(selector).each(function () {
+                var totalmain = 0,
+                    column = $(this).siblings(selector).addBack().index(this);
+                $(this).parents().prevUntil(':has(' + selector + ')').each(function () {
+                    totalmain += parseFloat($('td.main:eq(' + column + ')', this).html()) || 0;
+                })
+                $(this).html(totalmain.toFixed(2));
+            });
+        }
+
+        tally('td.totalmain');
+    });
+</script>
+
+<script>
+    $(function () {
+        function tally(selector) {
+            $(selector).each(function () {
+                var totalpied = 0,
+                    column = $(this).siblings(selector).addBack().index(this);
+                $(this).parents().prevUntil(':has(' + selector + ')').each(function () {
+                    totalpied += parseFloat($('td.pied:eq(' + column + ')', this).html()) || 0;
+                })
+                $(this).html(totalpied.toFixed(2));
+            });
+        }
+
+        tally('td.totalpied');
+    });
+</script>
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/highcharts-3d.js"></script>
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
+<script src="https://code.highcharts.com/modules/export-data.js"></script>
+<script src="https://code.highcharts.com/modules/accessibility.js"></script>
+

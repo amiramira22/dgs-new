@@ -46,7 +46,7 @@ class UserController extends Controller {
         $fos = $fos->pluck('name', 'id');
         $data['fos'] = $fos;
 
-        $connected_user_id = Session::get('connected_user_id');
+        $connected_user_id = request()->session()->get('connected_user_id');
         $data['messages'] = $this->userRepository->getMessagesByUser($connected_user_id);
         //dd( $data['messages']);
         //dd( $data['messages']);
@@ -75,20 +75,20 @@ class UserController extends Controller {
         preg_match_all('|<[^>]+>(.*)</[^>]+>|U', $msg, $newmsg);
         //dd($fo_ids, $newmsg[1][0]);
 
-        $save['sender_id'] = Session::get('connected_user_id');
+        $save['sender_id'] = request()->session()->get('connected_user_id');
         $save['message'] = $newmsg[1][0];
         foreach ($fo_ids as $id) {
             $save['receiver_id'] = $id;
             $this->userRepository->save_msg($save);
         }
 
-        Session::flash('message', 'Message has been sent successfully.');
+        request()->session()->flash('message', 'Message has been sent successfully.');
         return redirect()->route('admin.user.messages');
     }
 
     public function delete_message($id) {
         $this->userRepository->delete_message($id);
-        Session::flash('message', 'Message has been deleted successfully.');
+        request()->session()->flash('message', 'Message has been deleted successfully.');
         return redirect()->route('admin.user.messages');
     }
 
@@ -124,7 +124,7 @@ class UserController extends Controller {
         //dd($save);
         $this->userRepository->store($save);
         // Store data for only a single request and destory
-        Session::flash('message', 'User has been saved successfully.');
+        request()->session()->flash('message', 'User has been saved successfully.');
         // Redirect to `user.index` route
         // Use route:list to view the `Action` or where this routes going to
         return redirect()->route('admin.user.index');
@@ -167,7 +167,7 @@ class UserController extends Controller {
         }
         $this->userRepository->update($id, $save);
 
-        Session::flash('message', 'User has been updated successfully.');
+        request()->session()->flash('message', 'User has been updated successfully.');
         // Redirect to `user.index` route
         // Use route:list to view the `Action` or where this routes going to
         return redirect()->route('admin.user.index');
@@ -177,7 +177,7 @@ class UserController extends Controller {
         $save['id'] = $id;
         $save['active'] = 1;
         $this->userRepository->update($id, $save);
-        Session::flash('message', 'User has been updated successfully.');
+        request()->session()->flash('message', 'User has been updated successfully.');
         // Redirect to `user.index` route
         // Use route:list to view the `Action` or where this routes going to
         return redirect()->route('admin.user.index');
@@ -187,7 +187,7 @@ class UserController extends Controller {
         $save['id'] = $id;
         $save['active'] = 0;
         $this->userRepository->update($id, $save);
-        Session::flash('message', 'User has been updated successfully.');
+        request()->session()->flash('message', 'User has been updated successfully.');
         // Redirect to `user.index` route
         // Use route:list to view the `Action` or where this routes going to
         return redirect()->route('admin.user.index');
@@ -195,7 +195,7 @@ class UserController extends Controller {
 
     public function destroy($id) {
         $this->userRepository->destroy($id);
-        Session::flash('message', 'User has been deleted successfully.');
+        request()->session()->flash('message', 'User has been deleted successfully.');
         // Redirect to `user.index` route
         // Use route:list to view the `Action` or where this routes going to
         return redirect()->route('admin.user.index');

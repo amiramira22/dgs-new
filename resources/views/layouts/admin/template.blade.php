@@ -530,7 +530,9 @@ url()->current()==url('outlet')
                         <!--end Fo Profile-->
                         <!-- begin admin panel -->
 
-                    <?php if(request()->session()->get('connected_user_acces') == 'Admin' ) {?>
+                    <?php if(request()->session()->get('connected_user_acces') == 'Admin' ) {
+
+                        ?>
                     <!--FO Performance-->
                         <li class="menu-item menu-item-submenu {{ Request::segment(2) === 'fo_report'
                                &&  url()->current()!=url('admin/fo_report/foProfile')
@@ -654,9 +656,9 @@ url()->current()==url('outlet')
 
                         <!--Administration-->
                         <li class="menu-item menu-item-submenu
-                           {{  url()->current()== url('admin/upload/index')
+                           {{url()->current()== url('admin/upload/index')
 ||
-url()->current()== url('admin/outlet/ha_outlets')
+url()->current()== url('outlet/ha_outlets')
 ||
 url()->current()== url('visit/trackingVisitsReport')
 ||
@@ -714,9 +716,9 @@ url()->current()==url('admin/state')
                                         </a>
                                     </li>
 
-                                    <li class="menu-item {{  url()->current()==url('admin/outlet/ha_outlets') ? 'menu-item-active' : null }}"
+                                    <li class="menu-item {{  url()->current()==url('outlet/ha_outlets') ? 'menu-item-active' : null }}"
                                         aria-haspopup="true">
-                                        <a href="{{ url('admin/outlet/ha_outlets') }}"
+                                        <a href="{{ url('outlet/ha_outlets') }}"
                                            class="menu-link">
                                             <i class="menu-bullet menu-bullet-dot">
                                                 <span></span>
@@ -881,7 +883,9 @@ url()->current()==url('admin/state')
                         </li>
 
                         <!-- end admin panel -->
-                    <?php }?>
+                    <?php }
+
+                    ?>
 
                     <!--Message-->
                         <li class="menu-item" aria-haspopup="true">

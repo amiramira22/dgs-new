@@ -591,6 +591,75 @@ class ReportRepository extends ResourceRepository
         return $sum_shelf_array;
     }
 
+
+    public function get_total_shelf_NV($date_type, $start_date, $end_date, $category_id, $zone_ids, $channel_ids)
+    {
+        $results = array();
+        if ($date_type == 'month') {
+            $date = 'm_date';
+        } else if ($date_type == 'week') {
+            $date = 'w_date';
+        } else {
+            $date = 'q_date';
+        }
+        $query = MyModel::select('visits.' . $date . ' as date'
+            , DB::raw('sum(bcc_models.shelf) as shelf')
+            , DB::raw('(sum(CASE WHEN bcc_models.y = 1 THEN 1 ELSE 0 END)) as chapeau')
+            , DB::raw('(sum(CASE WHEN bcc_models.y = -10 THEN 1 ELSE 0 END)) as yeux')
+            , DB::raw('(sum(CASE WHEN bcc_models.y = -1 THEN 1 ELSE 0 END)) as main')
+            , DB::raw('(sum(CASE WHEN bcc_models.y = -2 THEN 1 ELSE 0 END)) as pied')
+        )
+            ->join('visits', 'visits.id', '=', 'models.visit_id')
+            ->join('outlets', 'outlets.id', '=', 'visits.outlet_id')
+            ->join('channels', 'channels.id', '=', 'outlets.channel_id')
+            ->join('zones', 'outlets.zone_id', '=', 'zones.id')
+            ->join('product_groups', 'product_groups.id', '=', 'models.product_group_id')
+            ->join('clusters', 'clusters.id', '=', 'product_groups.cluster_id')
+            ->join('sub_categories', 'sub_categories.id', '=', 'clusters.sub_category_id')
+            ->join('categories', 'categories.id', '=', 'sub_categories.category_id')
+            ->join('brands', 'brands.id', '=', 'product_groups.brand_id')
+            ->where('visits.' . $date, '>=', $start_date)
+            ->where('visits.' . $date, '<=', $end_date)
+            ->whereIn('visits.monthly_visit', array('1', '3'))
+            ->groupBy('visits.' . $date)
+            ->orderBy('visits.' . $date, 'asc');
+
+        if ($category_id != '-1') {
+            $query->where('categories.id', '=', $category_id);
+        }
+        if (is_array($zone_ids) && !empty($zone_ids) && !is_null($zone_ids)) {
+            $query->whereIn('zones.id', $zone_ids);
+        } else if ($zone_ids != -1 && !is_null($zone_ids)) {
+            $query->where('zones.id', '=', $zone_ids);
+        }
+        if (is_array($channel_ids) && !empty($channel_ids) && !is_null($channel_ids)) {
+            $query->whereIn('channels.id', $channel_ids);
+        } else if ($channel_ids != -1 && !is_null($channel_ids)) {
+            $query->where('channels.id', '=', $channel_ids);
+        }
+        $results = $query->get();
+        $sum_shelf_array = array();
+
+        foreach ($results as $row) {
+            $sum_shelf_array[$row->date] = $row->shelf;
+            $sum_chapeau_array[$row->date] = $row->chapeau;
+            $sum_yeux_array[$row->date] = $row->yeux;
+            $sum_main_array[$row->date] = $row->main;
+            $sum_pied_array[$row->date] = $row->pied;
+        }
+
+        $result_sum = array();
+        $result_sum[] = $sum_shelf_array;
+        $result_sum[] = $sum_chapeau_array;
+        $result_sum[] = $sum_yeux_array;
+        $result_sum[] = $sum_main_array;
+        $result_sum[] = $sum_pied_array;
+        //dd($result_sum);
+        return $result_sum;
+
+    }
+
+
 // Availibility grouped by Brands and Zones (Single date) --- Boulbaba 27/01/2018
     public function get_shelf_single_date_brand_zones($date_type, $start_date, $end_date, $category_id, $zone_ids, $channel_ids)
     {
@@ -604,14 +673,22 @@ class ReportRepository extends ResourceRepository
         $query = MyModel::select('zones.name as zone'
             , 'brands.name as brand_name'
             , 'brands.color as color'
-            , DB::raw('sum(bcc_models.shelf) as shelf'),
-            DB::raw('sum(bcc_models.shelf * bcc_product_groups.metrage) as metrage'))
+            , DB::raw('sum(bcc_models.shelf) as shelf')
+            , DB::raw('sum(bcc_models.shelf * bcc_product_groups.metrage) as metrage')
+            , DB::raw('sum(bcc_models.y) as ny')
+            // niveau des yeux -10 cad 0
+            , DB::raw('(sum(CASE WHEN bcc_models.y = 1 THEN 1 ELSE 0 END)) as chapeau')
+            , DB::raw('(sum(CASE WHEN bcc_models.y = -10 THEN 1 ELSE 0 END)) as yeux')
+            , DB::raw('(sum(CASE WHEN bcc_models.y = -1 THEN 1 ELSE 0 END)) as main')
+            , DB::raw('(sum(CASE WHEN bcc_models.y = -2 THEN 1 ELSE 0 END)) as pied')
+        )
             ->join('visits', 'models.visit_id', '=', 'visits.id')
             ->join('outlets', 'visits.outlet_id', '=', 'outlets.id')
             ->join('channels', 'outlets.channel_id', '=', 'channels.id')
             ->join('zones', 'outlets.zone_id', '=', 'zones.id')
-            ->join('products', 'models.product_id', '=', 'products.id')
-            ->join('product_groups', 'products.product_group_id', '=', 'product_groups.id')
+            //->join('products', 'models.product_id', '=', 'products.id')
+            //->join('product_groups', 'products.product_group_id', '=', 'product_groups.id')
+            ->join('product_groups', 'product_groups.id', '=', 'models.product_group_id')
             ->join('clusters', 'product_groups.cluster_id', '=', 'clusters.id')
             ->join('sub_categories', 'clusters.sub_category_id', '=', 'sub_categories.id')
             ->join('categories', 'sub_categories.category_id', '=', 'categories.id')
@@ -622,7 +699,7 @@ class ReportRepository extends ResourceRepository
             ->whereIn('visits.monthly_visit', array('1', '3'))
             ->groupBy('zones.id')
             ->groupBy('brands.id')
-            ->orderBy('metrage', 'DESC');
+            ->orderBy('shelf', 'DESC');
 
         if ($category_id != '-1') {
             $query->where('categories.id', '=', $category_id);
@@ -659,8 +736,8 @@ class ReportRepository extends ResourceRepository
             ->join('outlets', 'visits.outlet_id', '=', 'outlets.id')
             ->join('channels', 'outlets.channel_id', '=', 'channels.id')
             ->join('zones', 'outlets.zone_id', '=', 'zones.id')
-            ->join('products', 'models.product_id', '=', 'products.id')
-            ->join('product_groups', 'products.product_group_id', '=', 'product_groups.id')
+            //->join('products', 'models.product_id', '=', 'products.id')
+            ->join('product_groups', 'models.product_group_id', '=', 'product_groups.id')
             ->join('clusters', 'product_groups.cluster_id', '=', 'clusters.id')
             ->join('sub_categories', 'clusters.sub_category_id', '=', 'sub_categories.id')
             ->join('categories', 'sub_categories.category_id', '=', 'categories.id')
@@ -670,7 +747,7 @@ class ReportRepository extends ResourceRepository
             ->whereIn('visits.monthly_visit', array('1', '3'))
             ->groupBy('brands.id')
             ->orderBy('visits.' . $date, 'desc')
-            ->orderBy('metrage', 'DESC');
+            ->orderBy('shelf', 'DESC');
         if ($category_id != '-1') {
             $query->where('categories.id', '=', $category_id);
         }
@@ -710,8 +787,8 @@ class ReportRepository extends ResourceRepository
             ->join('outlets', 'visits.outlet_id', '=', 'outlets.id')
             ->join('channels', 'outlets.channel_id', '=', 'channels.id')
             ->join('zones', 'outlets.zone_id', '=', 'zones.id')
-            ->join('products', 'models.product_id', '=', 'products.id')
-            ->join('product_groups', 'products.product_group_id', '=', 'product_groups.id')
+            //->join('products', 'models.product_id', '=', 'products.id')
+            ->join('product_groups', 'models.product_group_id', '=', 'product_groups.id')
             ->join('clusters', 'product_groups.cluster_id', '=', 'clusters.id')
             ->join('sub_categories', 'clusters.sub_category_id', '=', 'sub_categories.id')
             ->join('categories', 'sub_categories.category_id', '=', 'categories.id')
@@ -721,7 +798,7 @@ class ReportRepository extends ResourceRepository
             ->whereIn('visits.monthly_visit', array('1', '3'))
             ->groupBy('brands.id')
             ->orderBy('visits.' . $date, 'desc')
-            ->orderBy('metrage', 'DESC');
+            ->orderBy('shelf', 'DESC');
 
         if ($category_id != '-1') {
             $query->where('categories.id', '=', $category_id);
@@ -754,18 +831,24 @@ class ReportRepository extends ResourceRepository
         } else {
             $date = 'q_date';
         }
-
-
         $query = MyModel::select('zones.name as zone'
-            , 'products.id as product_id'
-            , DB::raw('sum(bcc_models.shelf) as shelf'),
-            DB::raw('sum(bcc_models.shelf * bcc_product_groups.metrage) as metrage'))
+            , 'product_groups.id as product_group_id'
+            , 'brands.name as brand_name'
+            , DB::raw('sum(bcc_models.shelf) as shelf')
+            , DB::raw('sum(bcc_models.shelf * bcc_product_groups.metrage) as metrage')
+            , DB::raw('(sum(CASE WHEN bcc_models.y = 1 THEN 1 ELSE 0 END)) as chapeau')
+            , DB::raw('(sum(CASE WHEN bcc_models.y = -10 THEN 1 ELSE 0 END)) as yeux')
+            , DB::raw('(sum(CASE WHEN bcc_models.y = -1 THEN 1 ELSE 0 END)) as main')
+            , DB::raw('(sum(CASE WHEN bcc_models.y = -2 THEN 1 ELSE 0 END)) as pied')
+        )
             ->join('visits', 'models.visit_id', '=', 'visits.id')
             ->join('outlets', 'visits.outlet_id', '=', 'outlets.id')
             ->join('channels', 'outlets.channel_id', '=', 'channels.id')
             ->join('zones', 'outlets.zone_id', '=', 'zones.id')
-            ->join('products', 'models.product_id', '=', 'products.id')
-            ->join('product_groups', 'products.product_group_id', '=', 'product_groups.id')
+            //->join('products', 'models.product_id', '=', 'products.id')
+            ->join('product_groups', 'models.product_group_id', '=', 'product_groups.id')
+            //->join('products', 'products.product_group_id', '=', 'product_groups.id')
+
             ->join('clusters', 'product_groups.cluster_id', '=', 'clusters.id')
             ->join('sub_categories', 'clusters.sub_category_id', '=', 'sub_categories.id')
             ->join('categories', 'sub_categories.category_id', '=', 'categories.id')
@@ -775,8 +858,9 @@ class ReportRepository extends ResourceRepository
             ->where('visits.' . $date, '<=', $end_date)
             ->whereIn('visits.monthly_visit', array('1', '3'))
             ->groupBy('zones.id')
-            ->groupBy('products.id')
-            ->orderBy('metrage', 'DESC');
+            //->groupBy('products.id')
+            ->groupBy('product_groups.id')
+            ->orderBy('shelf', 'DESC');
         if ($category_id != '-1') {
             $query->where('categories.id', '=', $category_id);
         }
@@ -794,8 +878,68 @@ class ReportRepository extends ResourceRepository
         return $query->get();
     }
 
-// Shelf Share for each cluster : grouped by Brands and Outlet types (Single date)  --- Boulbaba 27/01/2018
+
+
+// Availibility for each cluster : grouped by Brands and Zones (Single date)  --- Boulbaba 27/01/2018
     public function get_shelf_cluster_channels($date_type, $start_date, $end_date, $category_id, $cluster_id, $zone_ids, $channel_ids)
+    {
+        if ($date_type == 'month') {
+            $date = 'm_date';
+        } else if ($date_type == 'week') {
+            $date = 'w_date';
+        } else {
+            $date = 'q_date';
+        }
+        $query = MyModel::select('channels.name as channel'
+            , 'product_groups.id as product_group_id'
+            , 'brands.name as brand_name'
+            , DB::raw('sum(bcc_models.shelf) as shelf')
+            , DB::raw('sum(bcc_models.shelf * bcc_product_groups.metrage) as metrage')
+            , DB::raw('(sum(CASE WHEN bcc_models.y = 1 THEN 1 ELSE 0 END)) as chapeau')
+            , DB::raw('(sum(CASE WHEN bcc_models.y = -10 THEN 1 ELSE 0 END)) as yeux')
+            , DB::raw('(sum(CASE WHEN bcc_models.y = -1 THEN 1 ELSE 0 END)) as main')
+            , DB::raw('(sum(CASE WHEN bcc_models.y = -2 THEN 1 ELSE 0 END)) as pied')
+        )
+            ->join('visits', 'models.visit_id', '=', 'visits.id')
+            ->join('outlets', 'visits.outlet_id', '=', 'outlets.id')
+            ->join('channels', 'outlets.channel_id', '=', 'channels.id')
+            ->join('zones', 'outlets.zone_id', '=', 'zones.id')
+            //->join('products', 'models.product_id', '=', 'products.id')
+            ->join('product_groups', 'models.product_group_id', '=', 'product_groups.id')
+            //->join('products', 'products.product_group_id', '=', 'product_groups.id')
+            ->join('clusters', 'product_groups.cluster_id', '=', 'clusters.id')
+            ->join('sub_categories', 'clusters.sub_category_id', '=', 'sub_categories.id')
+            ->join('categories', 'sub_categories.category_id', '=', 'categories.id')
+            ->join('brands', 'product_groups.brand_id', '=', 'brands.id')
+            ->where('clusters.id', $cluster_id)
+            ->where('visits.' . $date, '>=', $start_date)
+            ->where('visits.' . $date, '<=', $end_date)
+            ->whereIn('visits.monthly_visit', array('1', '3'))
+            ->groupBy('channels.id')
+            //->groupBy('products.id')
+            ->groupBy('product_groups.id')
+            ->orderBy('shelf', 'DESC');
+        if ($category_id != '-1') {
+            $query->where('categories.id', '=', $category_id);
+        }
+        if (is_array($zone_ids) && !empty($zone_ids) && !is_null($zone_ids)) {
+            $query->whereIn('zones.id', $zone_ids);
+        } else if ($zone_ids != -1 && !is_null($zone_ids)) {
+            $query->where('zones.id', '=', $zone_ids);
+        }
+        if (is_array($channel_ids) && !empty($channel_ids) && !is_null($channel_ids)) {
+            $query->whereIn('channels.id', $channel_ids);
+        } else if ($channel_ids != -1 && !is_null($channel_ids)) {
+            $query->where('channels.id', '=', $channel_ids);
+        }
+
+        return $query->get();
+    }
+
+
+
+// Shelf Share for each cluster : grouped by Brands and Outlet types (Single date)  --- Boulbaba 27/01/2018
+    public function get_shelf_cluster_channels_old($date_type, $start_date, $end_date, $category_id, $cluster_id, $zone_ids, $channel_ids)
     {
         if ($date_type == 'month') {
             $date = 'm_date';
@@ -855,14 +999,19 @@ class ReportRepository extends ResourceRepository
         }
 
         $query = MyModel::select('zones.name as zone'
-            , DB::raw('sum(bcc_models.shelf) as shelf'),
-            DB::raw('sum(bcc_models.shelf * bcc_product_groups.metrage) as metrage'))
+            , DB::raw('sum(bcc_models.shelf) as shelf')
+            , DB::raw('sum(bcc_models.shelf * bcc_product_groups.metrage) as metrage')
+            , DB::raw('(sum(CASE WHEN bcc_models.y = 1 THEN 1 ELSE 0 END)) as chapeau')
+            , DB::raw('(sum(CASE WHEN bcc_models.y = -10 THEN 1 ELSE 0 END)) as yeux')
+            , DB::raw('(sum(CASE WHEN bcc_models.y = -1 THEN 1 ELSE 0 END)) as main')
+            , DB::raw('(sum(CASE WHEN bcc_models.y = -2 THEN 1 ELSE 0 END)) as pied')
+        )
             ->join('visits', 'models.visit_id', '=', 'visits.id')
             ->join('outlets', 'visits.outlet_id', '=', 'outlets.id')
             ->join('channels', 'outlets.channel_id', '=', 'channels.id')
             ->join('zones', 'outlets.zone_id', '=', 'zones.id')
-            ->join('products', 'models.product_id', '=', 'products.id')
-            ->join('product_groups', 'products.product_group_id', '=', 'product_groups.id')
+            //->join('products', 'models.product_id', '=', 'products.id')
+            ->join('product_groups', 'models.product_group_id', '=', 'product_groups.id')
             ->join('clusters', 'product_groups.cluster_id', '=', 'clusters.id')
             ->join('sub_categories', 'clusters.sub_category_id', '=', 'sub_categories.id')
             ->join('categories', 'sub_categories.category_id', '=', 'categories.id')
@@ -887,16 +1036,114 @@ class ReportRepository extends ResourceRepository
             $query->where('channels.id', '=', $channel_ids);
         }
 
-        $results = $query->get();
+        /*$results = $query->get();
         $sum_shelf = array();
         foreach ($results as $row) {
-            $sum_shelf[$row->zone] = $row->shelf;
+            $sum_shelf[$row->zone] = row->shelf;
+
+        return $sum_shelf;*/
+
+        $results = $query->get();
+        $sum_shelf_array = array();
+
+        foreach ($results as $row) {
+            $sum_shelf_array[$row->zone] = $row->shelf;
+            $sum_chapeau_array[$row->zone] = $row->chapeau;
+            $sum_yeux_array[$row->zone] = $row->yeux;
+            $sum_main_array[$row->zone] = $row->main;
+            $sum_pied_array[$row->zone] = $row->pied;
         }
 
-        return $sum_shelf;
+        $result_sum = array();
+        $result_sum[] = $sum_shelf_array;
+        $result_sum[] = $sum_chapeau_array;
+        $result_sum[] = $sum_yeux_array;
+        $result_sum[] = $sum_main_array;
+        $result_sum[] = $sum_pied_array;
+        //dd($result_sum);
+        return $result_sum;
     }
 
-    public function get_total_shelf_by_channels($date_type, $start_date, $end_date, $category_id)
+
+
+    public function get_total_shelf_by_channels($date_type, $start_date, $end_date, $category_id, $zone_ids, $channel_ids)
+    {
+        if ($date_type == 'month') {
+            $date = 'm_date';
+        } else if ($date_type == 'week') {
+            $date = 'w_date';
+        } else {
+            $date = 'q_date';
+        }
+        $query = MyModel::select('channels.name as channel'
+            , DB::raw('sum(bcc_models.shelf) as shelf')
+            , DB::raw('sum(bcc_models.shelf * bcc_product_groups.metrage) as metrage')
+            , DB::raw('(sum(CASE WHEN bcc_models.y = 1 THEN 1 ELSE 0 END)) as chapeau')
+            , DB::raw('(sum(CASE WHEN bcc_models.y = -10 THEN 1 ELSE 0 END)) as yeux')
+            , DB::raw('(sum(CASE WHEN bcc_models.y = -1 THEN 1 ELSE 0 END)) as main')
+            , DB::raw('(sum(CASE WHEN bcc_models.y = -2 THEN 1 ELSE 0 END)) as pied')
+        )
+            ->join('visits', 'models.visit_id', '=', 'visits.id')
+            ->join('outlets', 'visits.outlet_id', '=', 'outlets.id')
+            ->join('channels', 'outlets.channel_id', '=', 'channels.id')
+            ->join('zones', 'outlets.zone_id', '=', 'zones.id')
+            //->join('products', 'models.product_id', '=', 'products.id')
+            ->join('product_groups', 'models.product_group_id', '=', 'product_groups.id')
+            ->join('clusters', 'product_groups.cluster_id', '=', 'clusters.id')
+            ->join('sub_categories', 'clusters.sub_category_id', '=', 'sub_categories.id')
+            ->join('categories', 'sub_categories.category_id', '=', 'categories.id')
+            ->join('brands', 'product_groups.brand_id', '=', 'brands.id')
+            ->where('visits.' . $date, '>=', $start_date)
+            ->where('visits.' . $date, '<=', $end_date)
+            ->whereIn('visits.monthly_visit', array('1', '3'))
+            ->groupBy('zones.id')
+            ->orderBy('visits.' . $date, 'desc');
+
+        if ($category_id != '-1') {
+            $query->where('categories.id', '=', $category_id);
+        }
+        if (is_array($zone_ids) && !empty($zone_ids) && !is_null($zone_ids)) {
+            $query->whereIn('zones.id', $zone_ids);
+        } else if ($zone_ids != -1 && !is_null($zone_ids)) {
+            $query->where('zones.id', '=', $zone_ids);
+        }
+        if (is_array($channel_ids) && !empty($channel_ids) && !is_null($channel_ids)) {
+            $query->whereIn('channels.id', $channel_ids);
+        } else if ($channel_ids != -1 && !is_null($channel_ids)) {
+            $query->where('channels.id', '=', $channel_ids);
+        }
+
+        /*$results = $query->get();
+        $sum_shelf = array();
+        foreach ($results as $row) {
+            $sum_shelf[$row->zone] = row->shelf;
+
+        return $sum_shelf;*/
+
+        $results = $query->get();
+        //dd($results);
+        $sum_shelf_array = array();
+
+        foreach ($results as $row) {
+            $sum_shelf_array[$row->channel] = $row->shelf;
+            $sum_chapeau_array[$row->channel] = $row->chapeau;
+            $sum_yeux_array[$row->channel] = $row->yeux;
+            $sum_main_array[$row->channel] = $row->main;
+            $sum_pied_array[$row->channel] = $row->pied;
+        }
+
+        $result_sum = array();
+        $result_sum[] = $sum_shelf_array;
+        $result_sum[] = $sum_chapeau_array;
+        $result_sum[] = $sum_yeux_array;
+        $result_sum[] = $sum_main_array;
+        $result_sum[] = $sum_pied_array;
+        //dd($result_sum);
+        return $result_sum;
+    }
+
+
+    public function get_total_shelf_by_channels_old($date_type, $start_date, $end_date, $category_id)
     {
         if ($date_type == 'month') {
             $date = 'm_date';
@@ -952,14 +1199,18 @@ class ReportRepository extends ResourceRepository
         $query = MyModel::select('channels.name as channel'
             , 'brands.name as brand_name'
             , 'brands.color as color'
-            , DB::raw('sum(bcc_models.shelf) as shelf'),
-            DB::raw('sum(bcc_models.shelf * bcc_product_groups.metrage) as metrage'))
+            , DB::raw('sum(bcc_models.shelf) as shelf')
+            , DB::raw('sum(bcc_models.shelf * bcc_product_groups.metrage) as metrage')
+            , DB::raw('(sum(CASE WHEN bcc_models.y = 1 THEN 1 ELSE 0 END)) as chapeau')
+            , DB::raw('(sum(CASE WHEN bcc_models.y = -10 THEN 1 ELSE 0 END)) as yeux')
+            , DB::raw('(sum(CASE WHEN bcc_models.y = -1 THEN 1 ELSE 0 END)) as main')
+            , DB::raw('(sum(CASE WHEN bcc_models.y = -2 THEN 1 ELSE 0 END)) as pied'))
             ->join('visits', 'models.visit_id', '=', 'visits.id')
             ->join('outlets', 'visits.outlet_id', '=', 'outlets.id')
             ->join('channels', 'outlets.channel_id', '=', 'channels.id')
             ->join('zones', 'outlets.zone_id', '=', 'zones.id')
-            ->join('products', 'models.product_id', '=', 'products.id')
-            ->join('product_groups', 'products.product_group_id', '=', 'product_groups.id')
+            //->join('products', 'models.product_id', '=', 'products.id')
+            ->join('product_groups', 'models.product_group_id', '=', 'product_groups.id')
             ->join('clusters', 'product_groups.cluster_id', '=', 'clusters.id')
             ->join('sub_categories', 'clusters.sub_category_id', '=', 'sub_categories.id')
             ->join('categories', 'sub_categories.category_id', '=', 'categories.id')
@@ -970,7 +1221,7 @@ class ReportRepository extends ResourceRepository
             ->where('channels.active', 1)
             ->groupBy('channels.id')
             ->groupBy('brands.id')
-            ->orderBy('metrage', 'desc');
+            ->orderBy('shelf', 'desc');
 
         if ($category_id != '-1') {
             $query->where('categories.id', '=', $category_id);
@@ -1204,15 +1455,15 @@ class ReportRepository extends ResourceRepository
     {
 
         $query = MyModel::select('outlets.name as outlet_name'
-            , 'products.id as product_id'
+            , 'product_groups.id as product_id'
             , 'models.price as price'
             , 'models.promo_price as promo_price'
         )
             ->join('visits', 'models.visit_id', '=', 'visits.id')
             ->join('outlets', 'visits.outlet_id', '=', 'outlets.id')
             ->join('channels', 'outlets.channel_id', '=', 'channels.id')
-            ->join('products', 'models.product_id', '=', 'products.id')
-            ->join('product_groups', 'products.product_group_id', '=', 'product_groups.id')
+            //->join('products', 'models.product_id', '=', 'products.id')
+            ->join('product_groups', 'models.product_group_id', '=', 'product_groups.id')
             ->join('clusters', 'product_groups.cluster_id', '=', 'clusters.id')
             ->join('sub_categories', 'clusters.sub_category_id', '=', 'sub_categories.id')
             ->join('categories', 'sub_categories.category_id', '=', 'categories.id')
@@ -1222,7 +1473,7 @@ class ReportRepository extends ResourceRepository
             })
             ->whereIn('visits.monthly_visit', array('1', '2', '3'))
             ->groupBy('outlets.id')
-            ->groupBy('products.id')
+            ->groupBy('product_groups.id')
             ->orderBy('brands.id', 'asc')
             ->orderBy('outlets.name', 'asc');
 

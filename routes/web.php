@@ -214,7 +214,7 @@ Route::group(['middleware' => 'web'], function () {
 
 });
 
-Route::group(['prefix' => 'admin', 'middleware' => 'isAdmin', 'namespace' => 'Admin', 'as' => 'admin.'], function () {
+Route::group(['prefix' => 'admin', 'middleware' => 'web', 'namespace' => 'Admin', 'as' => 'admin.'], function () {
 
     Route::post('fo_report/load_fo_routing/', ['as' => 'fo_report.load_fo_routing', 'uses' => 'FoReportController@load_fo_routing']);
 
@@ -270,6 +270,9 @@ Route::group(['prefix' => 'admin', 'middleware' => 'isAdmin', 'namespace' => 'Ad
 
     //Product Routes
     Route::resource('product', 'ProductController', ['only' => ['index', 'create', 'postProduct']]);
+
+
+
     Route::post('product/postProduct', ['as' => 'product.postProduct', 'uses' => 'ProductController@postProduct']);
     Route::get('product/edit/{id}', ['as' => 'product.edit', 'uses' => 'ProductController@edit']);
     Route::get('product/delete/{id}', ['as' => 'product.delete', 'uses' => 'ProductController@delete']);

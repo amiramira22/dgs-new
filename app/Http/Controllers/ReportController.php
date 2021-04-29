@@ -727,7 +727,6 @@ class ReportController extends Controller
                 $components_date = array();
                 $components = array();
                 $components_chart = array();
-
                 foreach ($data['report_data'] as $row) {
                     $date = ($row['date']);
                     if (!in_array($date, $dates)) {
@@ -741,7 +740,6 @@ class ReportController extends Controller
                     , $row['yeux']
                     , $row['main']
                     , $row['pied']
-
                     );
                     $components_chart[$row['brand_name']][$date] = $row['shelf'];
                     //$components_date [$row['date']] [$row['brand_name']] = $row['metrage'];
@@ -789,11 +787,20 @@ class ReportController extends Controller
                 $data['components_chart'] = $components_chart;
                 $data['dates'] = $dates;
                 $data['count_date'] = $count_date;
-            } // Single Date + Multi Zones
+            }
+
+            // Single Date + Multi Zones
             else if (!$multi_date && $multi_zone) {
                 $data['report_data'] = $this->reportRepository->get_shelf_single_date_brand_zones($date_type, $start_date, $end_date, $category_id, $selected_zone_ids, $selected_channel_ids);
-//                $data['sum_shelf'] = array_sum(array_values($this->reportRepository->get_total_shelf($date_type, $start_date, $end_date, $category_id, $selected_zone_ids, $selected_channel_ids)));
-                $data['sum_metrage'] = array_sum(array_values($this->reportRepository->get_total_metrage($date_type, $start_date, $end_date, $category_id, $selected_zone_ids, $selected_channel_ids)));
+
+                $tot_data=$this->reportRepository->get_total_shelf_nv($date_type, $start_date, $end_date, $category_id, $selected_zone_ids, $selected_channel_ids);
+                $data['sum_shelf'] = array_sum(array_values($tot_data[0]));
+                $data['sum_chapeau'] = array_sum(array_values($tot_data[1]));
+                $data['sum_yeux'] = array_sum(array_values($tot_data[2]));
+                $data['sum_main'] = array_sum(array_values($tot_data[3]));
+                $data['sum_pied'] = array_sum(array_values($tot_data[4]));
+
+                //$data['sum_metrage'] = array_sum(array_values($this->reportRepository->get_total_metrage($date_type, $start_date, $end_date, $category_id, $selected_zone_ids, $selected_channel_ids)));
 
                 $zones = array();
                 $components = array();
@@ -805,9 +812,39 @@ class ReportController extends Controller
                         $zones[] = $zone;
                     }
                     //create an array for every brand and the count at a outlet
-                    $components[$row['brand_name']][$zone] = array($row['shelf'], $row['metrage'], $row['color']);
-                    $components_zone [$row['zone']] [$row['brand_name']] = $row['metrage'];
+                    $components[$row['brand_name']][$zone] = array($row['shelf'], $row['metrage'], $row['color']
+                    , $row['chapeau']
+                    , $row['yeux']
+                    , $row['main']
+                    , $row['pied']);
+                    $components_zone [$row['zone']] [$row['brand_name']] = $row['shelf'];
+
+                    $components_date_chapeau[$row['zone']] [$row['brand_name']] = $row['chapeau'];
+                    $components_date_yeux[$row['zone']] [$row['brand_name']] = $row['yeux'];
+                    $components_date_main[$row['zone']] [$row['brand_name']] = $row['main'];
+                    $components_date_pied[$row['zone']] [$row['brand_name']] = $row['pied'];
                 }// end foreach report_data
+
+                $sum_chapeau_date = array();
+                $sum_yeux_date = array();
+                $sum_main_date = array();
+                $sum_pied_date = array();
+                foreach ($components_date_chapeau as $date => $componentBrand) {
+                    $sum_chapeau_date[$date] = array_sum(array_values($componentBrand));
+                }
+                foreach ($components_date_yeux as $date => $componentBrand) {
+                    $sum_yeux_date[$date] = array_sum(array_values($componentBrand));
+                }
+                foreach ($components_date_main as $date => $componentBrand) {
+                    $sum_main_date[$date] = array_sum(array_values($componentBrand));
+                }
+                foreach ($components_date_pied as $date => $componentBrand) {
+                    $sum_pied_date[$date] = array_sum(array_values($componentBrand));
+                }
+                $data['sum_chapeau_date'] = $sum_chapeau_date;
+                $data['sum_yeux_date'] = $sum_yeux_date;
+                $data['sum_main_date'] = $sum_main_date;
+                $data['sum_pied_date'] = $sum_pied_date;
 
                 foreach ($components_zone as $zone => $componentBrand) {
                     $sum_shelf_zone[$zone] = array_sum(array_values($componentBrand));
@@ -819,26 +856,72 @@ class ReportController extends Controller
             } // Single Date + Multi Channels
             else if (!$multi_date && !$multi_zone && $multi_channel) {
                 $data['report_data'] = $this->reportRepository->get_shelf_single_date_brand_channels($date_type, $start_date, $end_date, $category_id, $selected_zone_ids, $selected_channel_ids);
-                $data['sum_shelf'] = array_sum(array_values($this->reportRepository->get_total_shelf($date_type, $start_date, $end_date, $category_id, $selected_zone_ids, $selected_channel_ids)));
 
+                //$data['sum_shelf'] = array_sum(array_values($this->reportRepository->get_total_shelf($date_type, $start_date, $end_date, $category_id, $selected_zone_ids, $selected_channel_ids)));
+                $tot_data=$this->reportRepository->get_total_shelf_nv($date_type, $start_date, $end_date, $category_id, $selected_zone_ids, $selected_channel_ids);
+                $data['sum_shelf'] = array_sum(array_values($tot_data[0]));
+                $data['sum_chapeau'] = array_sum(array_values($tot_data[1]));
+                $data['sum_yeux'] = array_sum(array_values($tot_data[2]));
+                $data['sum_main'] = array_sum(array_values($tot_data[3]));
+                $data['sum_pied'] = array_sum(array_values($tot_data[4]));
                 $channels = array();
                 $components = array();
                 $components_channel = array();
                 $sum_shelf_channel = array();
                 //dd($data['report_data']);
+                $components_date_chapeau=array();
+                $components_date_yeux=array();
+                $components_date_main=array();
+                $components_date_pied=array();
                 foreach ($data['report_data'] as $row) {
                     $channel = $row['channel'];
                     if (!in_array($channel, $channels)) {
                         $channels[] = $channel;
                     }
                     //create an array for every brand and the count at a outlet
-                    $components[$row['brand_name']][$channel] = array($row['shelf'], $row['color']);
+                    $components[$row['brand_name']][$channel] = array(
+                        $row['shelf']
+                    , $row['metrage']
+                    , $row['color']
+                    , $row['chapeau']
+                    , $row['yeux']
+                    , $row['main']
+                    , $row['pied']);
+
+                    $components_date_chapeau[$row['channel']] [$row['brand_name']] = $row['chapeau'];
+                    $components_date_yeux[$row['channel']] [$row['brand_name']] = $row['yeux'];
+                    $components_date_main[$row['channel']] [$row['brand_name']] = $row['main'];
+                    $components_date_pied[$row['channel']] [$row['brand_name']] = $row['pied'];
                     $components_channel [$row['channel']] [$row['brand_name']] = $row['shelf'];
                 }// end foreach report_data
+
+                $sum_chapeau_date = array();
+                $sum_yeux_date = array();
+                $sum_main_date = array();
+                $sum_pied_date = array();
 
                 foreach ($components_channel as $channel => $componentBrand) {
                     $sum_shelf_channel[$channel] = array_sum(array_values($componentBrand));
                 }
+
+                foreach ($components_date_chapeau as $channel => $componentBrand) {
+                    $sum_chapeau_date[$channel] = array_sum(array_values($componentBrand));
+                }
+                foreach ($components_date_yeux as $channel => $componentBrand) {
+                    $sum_yeux_date[$channel] = array_sum(array_values($componentBrand));
+                }
+                foreach ($components_date_main as $channel => $componentBrand) {
+                    $sum_main_date[$channel] = array_sum(array_values($componentBrand));
+                }
+                foreach ($components_date_pied as $channel => $componentBrand) {
+                    $sum_pied_date[$channel] = array_sum(array_values($componentBrand));
+                }
+                $data['sum_chapeau_date'] = $sum_chapeau_date;
+                $data['sum_yeux_date'] = $sum_yeux_date;
+                $data['sum_main_date'] = $sum_main_date;
+                $data['sum_pied_date'] = $sum_pied_date;
+
+
                 $data['components'] = $components;
                 $data['components_channel'] = $components_channel;
                 $data['channels'] = $channels;
@@ -1045,8 +1128,22 @@ class ReportController extends Controller
         $data['zone_val'] = $request->input('zone_val');
 
         $data['report_data'] = $this->reportRepository->get_shelf_cluster_zones($date_type, $start_date, $end_date, $category_id, $cluster_id, $zone_ids, $channel_ids);
-        $data['sum_shelf_array'] = $this->reportRepository->get_total_shelf_by_zone($date_type, $start_date, $end_date, $category_id, $zone_ids, $channel_ids);
-        $data['sum_shelf'] = array_sum(array_values($data['sum_shelf_array']));
+        //$data['sum_shelf_array'] = $this->reportRepository->get_total_shelf_by_zone($date_type, $start_date, $end_date, $category_id, $zone_ids, $channel_ids);
+        //$data['sum_shelf'] = array_sum(array_values($data['sum_shelf_array']));
+        $tot_data = $this->reportRepository->get_total_shelf_by_zone($date_type, $start_date, $end_date, $category_id, $zone_ids, $channel_ids);
+
+        $data['sum_shelf_array']=$tot_data[0];
+        $data['sum_chapeau_array']=$tot_data[1];
+        $data['sum_yeux_array']=$tot_data[2];
+        $data['sum_main_array']=$tot_data[3];
+        $data['sum_pied_array']=$tot_data[4];
+
+        $data['sum_shelf'] = array_sum(array_values($tot_data[0]));
+        $data['sum_chapeau'] = array_sum(array_values($tot_data[1]));
+        $data['sum_yeux'] = array_sum(array_values($tot_data[2]));
+        $data['sum_main'] = array_sum(array_values($tot_data[3]));
+        $data['sum_pied'] = array_sum(array_values($tot_data[4]));
+
         return view('report.shelf_share.single_date.load_shelf_cluster_zones', $data);
     }
 
@@ -1067,8 +1164,23 @@ class ReportController extends Controller
         $data['zone_val'] = $request->input('zone_val');
 
         $data['report_data'] = $this->reportRepository->get_shelf_cluster_channels($date_type, $start_date, $end_date, $category_id, $cluster_id, $zone_ids, $channel_ids);
-        $data['sum_shelf_array'] = $this->reportRepository->get_total_shelf_by_channels($date_type, $start_date, $end_date, $category_id);
-        $data['sum_shelf'] = array_sum(array_values($data['sum_shelf_array']));
+        $tot_data = $this->reportRepository->get_total_shelf_by_channels($date_type, $start_date, $end_date, $category_id,$zone_ids, $channel_ids);
+        //$data['sum_shelf_array'] = $this->reportRepository->get_total_shelf_by_channels($date_type, $start_date, $end_date, $category_id);
+        //$data['sum_shelf'] = array_sum(array_values($data['sum_shelf_array']));
+        //////////////////////////////////////////////////////
+
+        $data['sum_shelf_array']=$tot_data[0];
+        $data['sum_chapeau_array']=$tot_data[1];
+        $data['sum_yeux_array']=$tot_data[2];
+        $data['sum_main_array']=$tot_data[3];
+        $data['sum_pied_array']=$tot_data[4];
+
+        $data['sum_shelf'] = array_sum(array_values($tot_data[0]));
+        $data['sum_chapeau'] = array_sum(array_values($tot_data[1]));
+        $data['sum_yeux'] = array_sum(array_values($tot_data[2]));
+        $data['sum_main'] = array_sum(array_values($tot_data[3]));
+        $data['sum_pied'] = array_sum(array_values($tot_data[4]));
+
         return view('report.shelf_share.single_date.load_shelf_cluster_channels', $data);
     }
 

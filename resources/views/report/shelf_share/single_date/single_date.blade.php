@@ -95,15 +95,6 @@
                             <th></th>
                             <th></th>
                             <?php foreach ($dates as $date) { ?>
-                            <th></th>
-                            <th></th>
-                            <th colspan="4">Niveau des yeux</th>
-                            <?php } ?>
-                        </tr>
-                        <tr>
-                            <th></th>
-                            <th></th>
-                            <?php foreach ($dates as $date) { ?>
                             <th>Shelf</th>
                             <th>%</th>
                             <th>Niveau chapeau</th>
@@ -264,33 +255,35 @@ $cluster_name = $cluster->name;
 }// end clusters foreach      
 ?>
 <script>
-
-
     <?php
     // pie chart
     $data_pie_chart = [];
-    $XCategories = array();
+    $dataFor3dChart = [];
+    $XCategories3DChart = array();
     foreach ($components as $brand_name => $componentDates) {
+        $series3DChart = [];
         foreach ($dates as $date) {
-            ?>
-
-        <?php
             if ($sum_shelf_date[$date] != 0)
                 $total_avg = number_format(($componentDates[$date][0] / $sum_shelf_date[$date]) * 100, 2, '.', '');
             else $total_avg = 0;
+
             $row_data['name'] = $brand_name;
             $row_data['y'] = $total_avg + 0;
             $brand_color = App\Entities\Brand::where('name', $brand_name)->first()->color;
             $row_data['color'] = $brand_color;
             $data_pie_chart[] = $row_data;
-            $XCategories[] = strval($brand_name);
-        }
+            $XCategories3DChart[] = strval($brand_name);
 
+            $series3DChart[] = number_format(($componentDates[$date][2] / $sum_chapeau_date[$date]) * 100, 2) + 0;
+            $series3DChart[] = number_format(($componentDates[$date][3] / $sum_yeux_date[$date]) * 100, 2) + 0;
+            $series3DChart[] = number_format(($componentDates[$date][4] / $sum_main_date[$date]) * 100, 2) + 0;
+            $series3DChart[] = number_format(($componentDates[$date][5] / $sum_pied_date[$date]) * 100, 2) + 0;
+        }
+        $dataFor3dChart[$brand_name] = json_encode($series3DChart);
     }
     $brand_data = json_encode($data_pie_chart);
-    $XCategories = json_encode($XCategories);
+    $XCategories3DChart = json_encode($XCategories3DChart);
     ?>
-
     showchart(<?php echo $brand_data ?>);
 
     function showchart(data) {
@@ -321,81 +314,79 @@ $cluster_name = $cluster->name;
                 "enabled": true
             }
         });
-
-
     }
 </script>
+
+
+
 <script>
+    var data_bar_chart = [];
+    <?php
+    foreach ($dataFor3dChart as $brand_name3D => $componentDates3D) {
+    $brand_color3D = App\Entities\Brand::where('name', $brand_name3D)->first()->color;
+    ?>
 
-
-    Highcharts.chart('Niveau-dex-yeux', {
-        chart: {
-            type: 'column',
-            options3d: {
-                enabled: true,
-                alpha: 15,
-                beta: 15,
-                viewDistance: 25,
-                depth: 40
-            }
-        },
-
-        title: {
-            text: 'Total fruit consumption, grouped by gender'
-        },
-
-        xAxis: {
-            categories:['Niveau chapeau','Niveau des yeux','Niveau des mains','Niveau des pieds'],
-
-            labels: {
-                skew3d: true,
-                style: {
-                    fontSize: '16px'
+    var obj = {
+        name: "<?php echo $brand_name3D?>",
+        data: <?php echo $componentDates3D ?>,
+        color:"<?php echo $brand_color3D?>",
+    };
+    data_bar_chart.push(obj);
+    <?php }  ?>
+console.log('amira')
+console.log(data_bar_chart)
+    showchartBar(data_bar_chart)
+    function showchartBar(data) {
+         Highcharts.chart('Niveau-dex-yeux', {
+            chart: {
+                type: 'column',
+                options3d: {
+                    enabled: true,
+                    alpha: 15,
+                    beta: 15,
+                    viewDistance: 25,
+                    depth: 40
                 }
-            }
-        },
+            },
 
-        yAxis: {
-            allowDecimals: false,
-            min: 0,
             title: {
-                text: 'Number of fruits',
-                skew3d: true
-            }
-        },
+                text: 'Niveau Des Yeux'
+            },
 
-        tooltip: {
-            headerFormat: '<b>{point.key}</b><br>',
-            pointFormat: '<span style="color:{series.color}">\u25CF</span> {series.name}: {point.y} / {point.stackTotal}'
-        },
-        plotOptions: {
-            column: {
-                stacking: 'normal',
-                depth: 40
-            }
-        },
+            xAxis: {
+                categories: ['Niveau chapeau', 'Niveau des yeux', 'Niveau des mains', 'Niveau des pieds'],
 
-        series: [
-            {
-                name: 'Chapeau',
-                data: [5, 3, 4, 7],
-                stack: 'Niveau',
-                color: '#ff0000'
-            }, {
-                name: 'yeux',
-                data: [3, 4, 4, 2, 5],
-                stack: 'Niveau',
-                color: '#e1ff00'
+                labels: {
+                    skew3d: true,
+                    style: {
+                        fontSize: '16px'
+                    }
+                }
+            },
 
-            }, {
-                name: 'main',
-                data: [2, 5, 6, 2, 1],
-                stack: 'Niveau',
-                color: '#001eff'
+            yAxis: {
+                allowDecimals: false,
+                min: 0,
+                title: {
+                    text: '',
+                    skew3d: true
+                }
+            },
 
-            }
-        ]
-    });
+            tooltip: {
+                headerFormat: '<b>{point.key}</b><br>',
+                pointFormat: '<span style="color:{series.color}">\u25CF</span> {series.name}: {point.y} / {point.stackTotal}'
+            },
+            plotOptions: {
+                column: {
+                    stacking: 'normal',
+                    depth: 40
+                }
+            },
+            series: data
+        })
+    }
+
 </script>
 
 <script>

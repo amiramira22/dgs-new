@@ -5,7 +5,8 @@
     <!-- begin::Head -->
     <head>
         <meta charset="utf-8" />
-        <title>HCM HAAPPYS | Login</title>
+        <title><?php echo env('brand_name_title') ?> | System</title>
+        <link rel="shortcut icon" href="{{ asset('img/logo-cap.png') }}">
         <meta name="description" content="Latest updates and statistic charts">
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no">
 
@@ -41,8 +42,6 @@
         <link href="{{ asset('assets/vendors/base/vendors.bundle.css') }}" rel="stylesheet" type="text/css"> 
         <link href="{{ asset('assets/demo/default/base/style.bundle.css') }}" rel="stylesheet" type="text/css">
         <!--<link href="{{ asset('assets/demo/base/style.bundle.css') }}" rel="stylesheet" type="text/css">--> 
-
-        <link rel="shortcut icon" type="image/x-icon" href="http://www.happys.tn/wp-content/uploads/2017/04/picoTPC.png">
 
     </head>
     <style>

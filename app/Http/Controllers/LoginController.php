@@ -29,7 +29,7 @@ class LoginController extends Controller
     }
     public function postLogin(Request $request)
     {
-        $auth = Auth::guard('web')->attempt(['email' => $request->username,
+        $auth = Auth::guard('web')->attempt(['username' => $request->username,
             'password' => $request->password, 'active' => 1]);
         $request->session()->flush();
         $request->session()->regenerate();
